@@ -7,14 +7,13 @@ from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 import matplotlib.pyplot as plt
 
 def make_map(projection=ccrs.PlateCarree()):
-    fig, ax = plt.subplots(figsize=(9, 10),
-                           subplot_kw=dict(projection=projection))
+    fig, ax = plt.subplots(subplot_kw=dict(projection=projection))#figsize=(9, 10)
     gl = ax.gridlines(draw_labels=True)
     gl.xlabels_top = gl.ylabels_right = False
     gl.xformatter = LONGITUDE_FORMATTER
     gl.yformatter = LATITUDE_FORMATTER
 
-    return fig, ax
+    return fig, ax, gl
 
 def make_map_subplt(projection=ccrs.PlateCarree()):
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 10), sharey=True,
