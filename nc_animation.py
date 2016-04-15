@@ -11,7 +11,7 @@ __email__ = 'janjaapmeijer@gmail.com'
 from matplotlib import animation
 from pylab import *
 from OceanPy.colormaps import *
-from OET.plot.colormap_vaklodingen import *
+from OpenEarthTools.plot.colormap_vaklodingen import *
 
 def nc_animation_play(x, y, z, cmin=None, cmax=None, save=False):
     fig = plt.figure()
