@@ -27,6 +27,14 @@ def cmap_sea_surface():
     sea_surface = make_colormap(seq)
     return sea_surface
 
+def cmap_sea_surface_r():
+    c = mcolors.ColorConverter().to_rgb
+    seq = [c('white'), 0.01, c('lightyellow'),
+           c('lightsage'), 0.25, c('lightsage'),
+           c('lightseagreen'), 0.55, c('lightseagreen'), c('navy')]
+    sea_surface = make_colormap(seq)
+    return sea_surface
+
 # c = mcolors.ColorConverter().to_rgb
 # # rvb = make_colormap(
 # #     [c('red'), c('violet'), 0.33, c('violet'), c('blue'), 0.66, c('blue')])
