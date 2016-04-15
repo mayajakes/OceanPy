@@ -23,20 +23,20 @@ ETRS89 = pyproj.Proj('+proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +
 SWE99 = pyproj.Proj("+proj=tmerc +lat_0=0 +lon_0=13.5 +k=1 +x_0=150000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs")
 OSM = pyproj.Proj('+ellps=WGS84 +proj=tmerc +lat_0=0 +lon_0=015d48.377m +k=1.0000056 +x_0=1500064.1 +y_0=-668.0')
 
-def rotate(xpnt, ypnt, zpnt, lstx, lsty, lstz, theta, dn=None):
+def rotatexyz(x0, y0, z0, lstx, lsty, lstz, theta, dn=None):
 
     import numpy as np
 
     # translation matrix
-    trans = np.matrix([[1,0,0,xpnt],
-                       [0,1,0,ypnt],
-                       [0,0,1,zpnt],
+    trans = np.matrix([[1,0,0,x0],
+                       [0,1,0,y0],
+                       [0,0,1,z0],
                        [0,0,0,1]])
 
     # inverse of translation matrix
-    inv_trans = np.matrix([[1,0,0,-xpnt],
-                           [0,1,0,-ypnt],
-                           [0,0,1,-zpnt],
+    inv_trans = np.matrix([[1,0,0,-x0],
+                           [0,1,0,-y0],
+                           [0,0,1,-z0],
                            [0,0,0,1]])
 
     # rotation matrix
@@ -70,20 +70,20 @@ def rotate(xpnt, ypnt, zpnt, lstx, lsty, lstz, theta, dn=None):
 
     return (xprime, yprime, zprime)
 
-def rotate1pnt(xpnt, ypnt, zpnt, x, y, z, theta):
+def rotatexyz_pnt(x0, y0, z0, x, y, z, theta):
 
     import numpy as np
 
     # translation matrix
-    trans = np.matrix([[1,0,0,xpnt],
-                       [0,1,0,ypnt],
-                       [0,0,1,zpnt],
+    trans = np.matrix([[1,0,0,x0],
+                       [0,1,0,y0],
+                       [0,0,1,z0],
                        [0,0,0,1]])
 
     # inverse of translation matrix
-    inv_trans = np.matrix([[1,0,0,-xpnt],
-                           [0,1,0,-ypnt],
-                           [0,0,1,-zpnt],
+    inv_trans = np.matrix([[1,0,0,-x0],
+                           [0,1,0,-y0],
+                           [0,0,1,-z0],
                            [0,0,0,1]])
 
     # rotation matrix
@@ -100,10 +100,6 @@ def rotate1pnt(xpnt, ypnt, zpnt, x, y, z, theta):
 
     xyzvector = np.matrix([[x],[y],[z],[1]])
 
-    xprime = []
-    yprime = []
-    zprime = []
-
     xyzprimeinv = np.dot(inv_trans,xyzvector)
     xyzprimerot = np.dot(rot, xyzprimeinv)
     xyzprimetrans = np.dot(trans, xyzprimerot)
@@ -113,18 +109,18 @@ def rotate1pnt(xpnt, ypnt, zpnt, x, y, z, theta):
 
     return (xprime, yprime, zprime)
 
-def rotate2D(xpnt, ypnt, lstx, lsty, theta, dn=None):
+def rotatexy(x0, y0, lstx, lsty, theta, dn=None):
 
     import numpy as np
 
     # translation matrix
-    trans = np.matrix([[1,0,xpnt],
-                       [0,1,ypnt],
+    trans = np.matrix([[1,0,x0],
+                       [0,1,y0],
                        [0,0,1]])
 
     # inverse of translation matrix
-    inv_trans = np.matrix([[1,0,-xpnt],
-                           [0,1,-ypnt],
+    inv_trans = np.matrix([[1,0,-x0],
+                           [0,1,-y0],
                            [0,0,1]])
 
     # rotation matrix
@@ -139,7 +135,6 @@ def rotate2D(xpnt, ypnt, lstx, lsty, theta, dn=None):
 
     xprime = []
     yprime = []
-    zprime = []
 
     for a in xyvector:
         xyprimeinv = np.dot(inv_trans,a)
@@ -147,5 +142,35 @@ def rotate2D(xpnt, ypnt, lstx, lsty, theta, dn=None):
         xyprimetrans = np.dot(trans, xyprimerot)
         xprime.append(float(xyprimetrans[0]))
         yprime.append(float(xyprimetrans[1]))
+
+    return (xprime, yprime)
+
+def rotatexy_pnt(x0, y0, x, y, theta):
+
+    import numpy as np
+
+    # translation matrix
+    trans = np.matrix([[1,0,x0],
+                       [0,1,y0],
+                       [0,0,1]])
+
+    # inverse of translation matrix
+    inv_trans = np.matrix([[1,0,-x0],
+                           [0,1,-y0],
+                           [0,0,1]])
+
+    # rotation matrix
+    rot = np.matrix([[np.cos(theta), -np.sin(theta), 0],
+                     [np.sin(theta), np.cos(theta), 0],
+                     [0,0,1]])
+
+    xyvector = [np.matrix([[x],[y],[1]])]
+
+    for a in xyvector:
+        xyprimeinv = np.dot(inv_trans,a)
+        xyprimerot = np.dot(rot, xyprimeinv)
+        xyprimetrans = np.dot(trans, xyprimerot)
+        xprime = float(xyprimetrans[0])
+        yprime = float(xyprimetrans[1])
 
     return (xprime, yprime)
