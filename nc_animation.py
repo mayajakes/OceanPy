@@ -7,11 +7,25 @@ nc_animation makes an animation of a NetCDF file
 __author__ = 'Jan Jaap Meijer'
 __email__ = 'janjaapmeijer@gmail.com'
 
+import os
 
 from matplotlib import animation
 from pylab import *
 from OceanPy.colormaps import *
 from OpenEarthTools.plot.colormap_vaklodingen import *
+
+# class ncAnimation:
+#     filename = ''
+#     workdir = ''
+#     anim = 0 #
+#
+def __init__(self, filename=None):#
+    self.filename = input('Provide filename for animation: ')#
+    self.workdir = os.path.join(input('Provide root of the project: '), 'Animations')
+#     self.anim = 0
+#     self.x = 0
+#     self.y = 0
+#     self.z = 0)
 
 def nc_animation_play(x, y, z, cmin=None, cmax=None, save=False):
     fig = plt.figure()
@@ -96,6 +110,17 @@ def nc_animation_play2(x, y, z1, z2, h, points, cmin=None, cmax=None):
 
     # call the animator.  blit=True means only re-draw the parts that have changed.
     anim = animation.FuncAnimation(fig, animate, frames=shape(z2)[0], init_func=init, interval=1, blit=False)
+
+    def nc_animation_save(path, filename, dpi):
+        writer = animation.writers['ffmpeg'](fps=20, codec='libx264', bitrate=-1)
+        anim.save(os.path.join(path, filename + '.mp4'),writer=writer,dpi=dpi)
+
+    if save:
+        path = os.path.abspath(os.path.join(os.sep, 'Users', 'jaap.meijer', 'Dropbox', 'RISCKIT_Jaap', 'Animations'))# input('Provide path to write the animation to: ')
+        filename = input('Provide filename for animation: ')
+        if not os.path.exists(path):
+            os.makedirs(path)
+        nc_animation_save(path, filename, dpi=200)
 
     plt.show()
 
