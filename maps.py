@@ -6,7 +6,7 @@ from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 
 import matplotlib.pyplot as plt
 
-def make_map(projection=ccrs.PlateCarree(), figsize=False):
+def make_map(projection=ccrs.PlateCarree(), figsize=None):
     fig, ax = plt.subplots(figsize=figsize, subplot_kw=dict(projection=projection))
     gl = ax.gridlines(draw_labels=True)
     gl.xlabels_top = gl.ylabels_right = False
