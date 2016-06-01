@@ -43,10 +43,10 @@ def set_color_cmap(cmap, ncolors, nset, color):
     cmap = cmap.from_list('cmap', cmaplist, cmap.N)
     return cmap
 
-def extend_colorbar(cmap, color, extreme='min'):
-    cmap.set_under(color)
-    plt.colorbar(extend=extreme)
-    return cmap
+# def extend_colorbar(cmap, color, extreme='min'):
+#     cmap.set_under(color)
+#     plt.colorbar(extend=extreme)
+#     return cmap
 
 
 # c = mcolors.ColorConverter().to_rgb
