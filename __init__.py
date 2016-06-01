@@ -3,4 +3,5 @@
 from OceanPy.readwrite import *
 from OceanPy.projections import *
 from OceanPy.shapefiles import *
+from OceanPy.colormaps import *
 from OceanPy.find import *
