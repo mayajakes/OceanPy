@@ -35,6 +35,18 @@ def cmap_sea_surface_r():
     sea_surface = make_colormap(seq)
     return sea_surface
 
+
+def set_color_cmap(cmap, ncolors, nset, color):
+    cmapcolors = cmap(np.linspace(0, 1, ncolors))
+    cmaplist = [tuple(cmapcolor) for cmapcolor in cmapcolors]
+    cmaplist[nset] = mcolors.colorConverter.to_rgba(color)
+    cmap = cmap.from_list('cmap', cmaplist, cmap.N)
+    return cmap
+
+# cmap.set_under('gray')
+
+
+
 # c = mcolors.ColorConverter().to_rgb
 # # rvb = make_colormap(
 # #     [c('red'), c('violet'), 0.33, c('violet'), c('blue'), 0.66, c('blue')])
