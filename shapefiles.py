@@ -21,9 +21,12 @@ def coords_in_polygon(shpfile_points, shpfile_polygons, projection=None):
 
     coords = []
 
-    sf_points = shpfile_points
-    # sf_points = shapefile.Reader(shpfile_points)
-    sf_polygons = shapefile.Reader(shpfile_polygons)
+    try:
+        sf_points = shapefile.Reader(shpfile_points)
+        sf_polygons = shapefile.Reader(shpfile_polygons)
+    except shapefile.ShapefileException:
+        sf_points = shpfile_points
+        sf_polygons = shpfile_polygons
 
     for shape in sf_points.shapes():
         if projection is not None:
