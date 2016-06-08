@@ -4,6 +4,23 @@ import pyproj
 import shapefile
 from shapely.geometry import Polygon, Point
 
+class Shapefile(object):
+
+    shpfile = ''
+
+    def __init__(self, shpfile=None):
+        self.shpfile = shpfile
+        self.read_shpfile()
+        # self.coordinates()
+
+    def read_shpfile(self):
+        self.sf = shapefile.Reader(self.shpfile)
+
+    # def coordinates(self):
+    #     coords = []
+    #     for shape in sf.shapes():
+    #         for x, y in shape.points:
+    #             coords.append(x,y)
 
 def coords_from_line(shpfile_line, projection=None):
     coords = []
@@ -59,3 +76,5 @@ def transform_polygons(shpfile_polygons, projin, projout):
         polygons.poly(parts=[poly])
 
     return polygons
+
+# def transform_points(shpfile_points, projin, projout):
