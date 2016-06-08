@@ -12,36 +12,48 @@ class Shapefile(object):
         self.shpfile = shpfile
         self.projin = projin
         self.projout = projout
-        self.coords()
+        self.get_coords()
 
     def read_shpfile(self):
         try:
-            self.sf = shapefile.Reader(self.shpfile)
+            self.reader = shapefile.Reader(self.shpfile)
         except shapefile.ShapefileException:
-            self.sf = self.shpfile
+            self.reader = self.shpfile
 
-    def coords(self):
+    def get_coords(self):
         self.read_shpfile()
         self.coordinates = []
-        for shape in self.sf.shapes():
+        for shape in self.reader.shapes():
             for x, y in shape.points:
                 if self.projin is not None and self.projout is not None:
                     self.coordinates.append(pyproj.transform(self.projin, self.projout, x, y))
                 else:
                     self.coordinates.append((x, y))
 
-    # def transform(self, projin=None, projout=None):
+    def transform_shapes(self):
+        if self.reader.shapeType == 1 or self.reader.shapeType == 3:
+            pass
+        elif self.reader.shapeType == 5:
+            self.writer = shapefile.Writer(shapefile.POLYGON)
+            for shape in self.reader.shapes():
+                points = shape.points
+                poly = []
+                for point in points:
+                    poly.append(list(pyproj.transform(self.projin, self.projout, point[0], point[1])))
+                self.writer.poly(parts=[poly])
+        return self.writer
+        # def transform(self, projin=None, projout=None):
 
-def coords_from_line(shpfile_line, projection=None):
-    coords = []
-    sf_line = shapefile.Reader(shpfile_line)
-    for shape in sf_line.shapes():
-        for x, y in shape.points:
-            if projection is not None:
-                coords.append(pyproj.transform(projection, op.WGS84, x, y))
-            else:
-                coords.append((x, y))
-    return coords
+# def coords_from_line(shpfile_line, projection=None):
+#     coords = []
+#     sf_line = shapefile.Reader(shpfile_line)
+#     for shape in sf_line.shapes():
+#         for x, y in shape.points:
+#             if projection is not None:
+#                 coords.append(pyproj.transform(projection, op.WGS84, x, y))
+#             else:
+#                 coords.append((x, y))
+#     return coords
 
 
 def coords_in_polygon(shpfile_points, shpfile_polygons, projection=None):
