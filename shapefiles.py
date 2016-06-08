@@ -20,7 +20,7 @@ class Shapefile(object):
         self.coordinates = []
         for shape in self.sf.shapes():
             for x, y in shape.points:
-                self.coordinates.append(x, y)
+                self.coordinates.append((x, y))
 
 def coords_from_line(shpfile_line, projection=None):
     coords = []
@@ -30,7 +30,7 @@ def coords_from_line(shpfile_line, projection=None):
             if projection is not None:
                 coords.append(pyproj.transform(projection, op.WGS84, x, y))
             else:
-                coords.append(x, y)
+                coords.append((x, y))
     return coords
 
 
