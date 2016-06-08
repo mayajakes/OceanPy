@@ -25,7 +25,7 @@ class Shapefile(object):
                 else:
                     self.coordinates.append((x, y))
 
-    def transform(self, projin=None, projout=None):
+    # def transform(self, projin=None, projout=None):
 
 def coords_from_line(shpfile_line, projection=None):
     coords = []
