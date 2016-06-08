@@ -37,7 +37,9 @@ def coords_in_polygon(shpfile_points, shpfile_polygons, projection=None):
         for poly in sf_polygons.shapes():
             if all([len(x) > 2 for x in poly.points]):
                 poly = [[x, y] for x, y, _, _ in poly.points]
-            if Polygon(poly.points).contains(point):
+                if Polygon(poly).contains(point):
+                    coords.append(point.coords[0])
+            elif Polygon(poly.points).contains(point):
                 coords.append(point.coords[0])
     return coords
 
