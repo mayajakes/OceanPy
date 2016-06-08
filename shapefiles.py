@@ -10,20 +10,25 @@ class Shapefile(object):
 
     def __init__(self, shpfile=None, projin=None, projout=None):
         self.shpfile = shpfile
+        self.projin = projin
+        self.projout = projout
         self.coords()
 
     def read_shpfile(self):
-        self.sf = shapefile.Reader(self.shpfile)
+        try:
+            self.sf = shapefile.Reader(self.shpfile)
+        except shapefile.ShapefileException:
+            self.sf = self.shpfile
 
     def coords(self):
         self.read_shpfile()
         self.coordinates = []
         for shape in self.sf.shapes():
             for x, y in shape.points:
-                # if projin is not None and projout is not None:
-                #
-                # else:
-                self.coordinates.append((x, y))
+                if self.projin is not None and self.projout is not None:
+                    self.coordinates.append(pyproj.transform(self.projin, self.projout, x, y))
+                else:
+                    self.coordinates.append((x, y))
 
     # def transform(self, projin=None, projout=None):
 
