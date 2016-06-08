@@ -20,10 +20,10 @@ class Shapefile(object):
         self.coordinates = []
         for shape in self.sf.shapes():
             for x, y in shape.points:
-                if projin is not None and projout is not None:
-
-                else:
-                    self.coordinates.append((x, y))
+                # if projin is not None and projout is not None:
+                #
+                # else:
+                self.coordinates.append((x, y))
 
     # def transform(self, projin=None, projout=None):
 
