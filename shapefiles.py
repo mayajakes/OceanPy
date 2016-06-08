@@ -35,11 +35,13 @@ def coords_in_polygon(shpfile_points, shpfile_polygons, projection=None):
         else:
             point = Point(shape.points[0])
         for poly in sf_polygons.shapes():
+            if all([len(x) > 2 for x in poly.points]):
+                poly = [[x, y] for x, y, _, _ in poly.shapes()[0].points]
             if Polygon(poly.points).contains(point):
                 coords.append(point.coords[0])
     return coords
 
-def convert_polygons(shpfile_polygons, projin, projout):
+def transform_polygons(shpfile_polygons, projin, projout):
 
     try:
         sf_polygons = shapefile.Reader(shpfile_polygons)
