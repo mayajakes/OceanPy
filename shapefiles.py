@@ -10,7 +10,7 @@ class Shapefile(object):
 
     def __init__(self, shpfile=None):
         self.shpfile = shpfile
-        # self.read_shpfile()
+        self.read_shpfile()
         self.coords()
 
     def read_shpfile(self):
