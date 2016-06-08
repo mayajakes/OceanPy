@@ -8,19 +8,24 @@ class Shapefile(object):
 
     shpfile = ''
 
-    def __init__(self, shpfile=None):
+    def __init__(self, shpfile=None, projin=None, projout=None):
         self.shpfile = shpfile
-        self.read_shpfile()
         self.coords()
 
     def read_shpfile(self):
         self.sf = shapefile.Reader(self.shpfile)
 
     def coords(self):
+        self.read_shpfile()
         self.coordinates = []
         for shape in self.sf.shapes():
             for x, y in shape.points:
-                self.coordinates.append((x, y))
+                if projin is not None and projout is not None:
+
+                else:
+                    self.coordinates.append((x, y))
+
+    def transform(self, projin=None, projout=None):
 
 def coords_from_line(shpfile_line, projection=None):
     coords = []
@@ -52,11 +57,11 @@ def coords_in_polygon(shpfile_points, shpfile_polygons, projection=None):
         else:
             point = Point(shape.points[0])
         for poly in sf_polygons.shapes():
-            if all([len(x) > 2 for x in poly.points]):
-                poly = [[x, y] for x, y, _, _ in poly.points]
-                if Polygon(poly).contains(point):
-                    coords.append(point.coords[0])
-            elif Polygon(poly.points).contains(point):
+            # if all([len(x) > 2 for x in poly.points]):
+            #     poly = [[x, y] for x, y, _, _ in poly.points]
+            #     if Polygon(poly).contains(point):
+            #         coords.append(point.coords[0])
+            if Polygon(poly.points[0]).contains(point):
                 coords.append(point.coords[0])
     return coords
 
