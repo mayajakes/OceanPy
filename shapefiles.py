@@ -10,17 +10,17 @@ class Shapefile(object):
 
     def __init__(self, shpfile=None):
         self.shpfile = shpfile
-        self.read_shpfile()
-        # self.coordinates()
+        # self.read_shpfile()
+        self.coords()
 
     def read_shpfile(self):
         self.sf = shapefile.Reader(self.shpfile)
 
-    # def coordinates(self):
-    #     coords = []
-    #     for shape in sf.shapes():
-    #         for x, y in shape.points:
-    #             coords.append(x,y)
+    def coords(self):
+        self.coordinates = []
+        for shape in self.sf.shapes():
+            for x, y in shape.points:
+                self.coordinates.append(x, y)
 
 def coords_from_line(shpfile_line, projection=None):
     coords = []
