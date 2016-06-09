@@ -25,10 +25,11 @@ def readxyz(filename,step=None,xy=False):
             ystep  = [y[i] for i in range(0,len(y),step)]
             zstep  = [z[i] for i in range(0,len(z),step)]
 
-        if step is None:
-            return (x, y, z)
+            return xstep, ystep, zstep
+
         else:
-            return (xstep, ystep, zstep)
+            return x, y, z
+
     else:
         x = []
         y = []
