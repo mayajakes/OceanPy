@@ -26,9 +26,9 @@ def readxyz(filename,step=None,xy=False):
             zstep  = [z[i] for i in range(0,len(z),step)]
 
         if step is None:
-            return x, y, z
+            return (x, y, z)
         else:
-            return xstep, ystep, zstep
+            return (xstep, ystep, zstep)
     else:
         x = []
         y = []
@@ -39,7 +39,7 @@ def readxyz(filename,step=None,xy=False):
             y.append(float(y1))
         xyz.close()
 
-        return x,y
+        return (x, y)
 
 def writexyz(filename, x, y, z=None):
 

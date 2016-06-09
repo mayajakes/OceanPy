@@ -32,26 +32,6 @@ class Shapefile(object):
                 else:
                     self.coordinates.append((x, y))
 
-    def get_patches(self):
-        if self.reader.shapeType == 5 or self.writer.shapeType == 5:
-            self.read_shpfile()
-            patches = []
-            if self.projin is not None and self.projout is not None:
-                self.transform_shapes()
-                for shape in self.writer.shapes():
-                    if all([len(x) > 2 for x in shape.points]):
-                        poly = [[x, y] for x, y, _, _ in shape.points]
-                        patches.append(mplpatch.Polygon(poly))
-                    else:
-                        patches.append(mplpatch.Polygon(shape.points))
-            else:
-                for shape in self.reader.shapes():
-                    patches.append(mplpatch.Polygon(shape.points))
-            return patches
-        else:
-            pass
-
-
     def transform_shapes(self):
         if self.reader.shapeType == 1 or self.reader.shapeType == 3:
             pass
@@ -64,7 +44,6 @@ class Shapefile(object):
                     poly.append(list(pyproj.transform(self.projin, self.projout, point[0], point[1])))
                 self.writer.poly(parts=[poly])
         return self.writer
-
 
 def shapes_in_polygons(shpfile_shapes, shpfile_polygons):
 
@@ -82,6 +61,58 @@ def shapes_in_polygons(shpfile_shapes, shpfile_polygons):
         return coords
     else:
         pass
+
+def write_shpfile(coords):
+
+    shapefile.Writer(shapefile.POINT)
+
+
+
+        # def get_patches(self):
+    #     if self.reader.shapeType == 5 or self.writer.shapeType == 5:
+    #         self.read_shpfile()
+    #         patches = []
+    #         if self.projin is not None and self.projout is not None:
+    #             self.transform_shapes()
+    #             for shape in self.writer.shapes():
+    #                 if all([len(x) > 2 for x in shape.points]):
+    #                     poly = [[x, y] for x, y, _, _ in shape.points]
+    #                     patches.append(mplpatch.Polygon(poly, closed=True, fill=False))
+    #                 else:
+    #                     patches.append(mplpatch.Polygon(shape.points))
+    #         else:
+    #             for shape in self.reader.shapes():
+    #                 patches.append(mplpatch.Polygon(shape.points))
+    #         return patches
+    #     else:
+    #         pass
+
+
+
+
+
+
+# def get_patches(self):
+#     if self.reader.shapeType == 5 or self.writer.shapeType == 5:
+#         self.read_shpfile()
+#         patches = []
+#         if self.projin is not None and self.projout is not None:
+#             self.transform_shapes()
+#             for shape in self.writer.shapes():
+#                 if all([len(x) > 2 for x in shape.points]):
+#                     poly = [[x, y] for x, y, _, _ in shape.points]
+#                     patches.append(mplpatch.Polygon(poly, closed=True, fill=False))
+#                 else:
+#                     patches.append(mplpatch.Polygon(shape.points))
+#         else:
+#             for shape in self.reader.shapes():
+#                 patches.append(mplpatch.Polygon(shape.points))
+#         return patches
+#     else:
+#         pass
+
+
+
 
 # def coords_in_polygon(shpfile_points, shpfile_polygons, projection=None):
 #
