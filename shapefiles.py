@@ -14,7 +14,7 @@ class Shapefile(object):
         self.projin = projin
         self.projout = projout
         self.get_coords()
-        self.get_patch()
+        # self.get_patch()
 
     def read_shpfile(self):
         try:
@@ -32,19 +32,19 @@ class Shapefile(object):
                 else:
                     self.coordinates.append((x, y))
 
-    def get_patch(self):
-        if self.reader.shapeType == 5:
-            self.read_shpfile()
-            self.patches = []
-            if self.projin is not None and self.projout is not None:
-                self.transform_shapes()
-                for shape in self.writer.shapes():
-                    self.patches.append(mplpatch.Polygon(shape.points))
-            else:
-                for shape in self.reader.shapes():
-                    self.patches.append(mplpatch.Polygon(shape.points))
-        else:
-            pass
+    # def get_patch(self):
+    #     if self.reader.shapeType == 5:
+    #         self.read_shpfile()
+    #         self.patches = []
+    #         if self.projin is not None and self.projout is not None:
+    #             self.transform_shapes()
+    #             for shape in self.writer.shapes():
+    #                 self.patches.append(mplpatch.Polygon(shape.points))
+    #         else:
+    #             for shape in self.reader.shapes():
+    #                 self.patches.append(mplpatch.Polygon(shape.points))
+    #     else:
+    #         pass
 
 
     def transform_shapes(self):
