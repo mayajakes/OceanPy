@@ -55,9 +55,9 @@ def shapes_in_polygons(shpfile_shapes, shpfile_polygons):
                 if all([len(x) > 2 for x in poly.points]):
                     poly = [[x, y] for x, y, _, _ in poly.points]
                     if slgeo.Polygon(poly).contains(point):
-                        shapes.point(x=shape.points[0,0], y=shape.points[0,1], z=shape.points[0,2])
+                        shapes.point(x=shape.points[0][0], y=shape.points[0][1], z=shape.points[0][2])
                 elif slgeo.Polygon(poly.points[0]).contains(point):
-                    shapes.point(x=shape.points[0, 0], y=shape.points[0, 1], z=shape.points[0, 2])
+                    shapes.point(x=shape.points[0][0], y=shape.points[0][1], z=shape.points[0][2])
 
         return shapes
     else:
