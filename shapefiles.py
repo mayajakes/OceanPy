@@ -14,6 +14,7 @@ class Shapefile(object):
         self.projin = projin
         self.projout = projout
         self.get_coords()
+        self.get_patch()
 
     def read_shpfile(self):
         try:
