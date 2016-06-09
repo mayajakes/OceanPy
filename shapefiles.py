@@ -62,9 +62,17 @@ def shapes_in_polygons(shpfile_shapes, shpfile_polygons):
     else:
         pass
 
-def write_shpfile(coords):
+def write_shpfile(coords, path=None):
 
-    shapefile.Writer(shapefile.POINT)
+    shpfile = shapefile.Writer(shapefile.POINT)
+    for x, y, z in coords:
+        shpfile.point(x, y, z)
+
+    if path is not None:
+        shpfile.save(path)
+
+    return shpfile
+
 
 
 
