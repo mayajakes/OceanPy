@@ -39,7 +39,11 @@ class Shapefile(object):
             if self.projin is not None and self.projout is not None:
                 self.transform_shapes()
                 for shape in self.writer.shapes():
-                    patches.append(mplpatch.Polygon(shape.points))
+                    if all([len(x) > 2 for x in shape.points]):
+                        poly = [[x, y] for x, y, _, _ in shape.points]
+                        patches.append(mplpatch.Polygon(poly))
+                    else:
+                        patches.append(mplpatch.Polygon(shape.points))
             else:
                 for shape in self.reader.shapes():
                     patches.append(mplpatch.Polygon(shape.points))
