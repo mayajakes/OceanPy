@@ -38,10 +38,10 @@ class Shapefile(object):
             if self.projin is not None and self.projout is not None:
                 self.transform_shapes()
                 for shape in self.writer.shapes():
-                    mplpatch.Polygon(shape.points)
+                    self.patches.append(mplpatch.Polygon(shape.points))
             else:
                 for shape in self.reader.shapes():
-                    mplpatch.Polygon(shape.points)
+                    self.patches.append(mplpatch.Polygon(shape.points))
         else:
             pass
 
