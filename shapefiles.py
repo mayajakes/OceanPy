@@ -60,7 +60,7 @@ class Shapefile(object):
                 self.writer.poly(parts=[poly])
         return self.writer
 
-def shapes_in_polygons(shpfile_shapes, shpfile_polygons):
+def shapes_in_polygons(shpfile_shapes, shpfile_polygons,):
 
     if shpfile_shapes.shapeType == 1 or shpfile_shapes.shapeType == 3:
         shapes = shapefile.Writer(shapeType=shpfile_shapes.shapeType)
@@ -72,7 +72,7 @@ def shapes_in_polygons(shpfile_shapes, shpfile_polygons):
                     if slgeo.Polygon(poly).contains(point):
                         shapes.point(x=shape.points[0][0], y=shape.points[0][1], z=shape.points[0][2])
                 elif slgeo.Polygon(poly.points[0]).contains(point):
-                    shapes.point(x=shape.points[0][0], y=shape.points[0][1], z=shape.points[0][2])
+                    shapes.point(x=shape.points[0][0], y=shape.points[0][1])
 
                 for s in shapes.shapes():
                     s.shapeType = shpfile_shapes.shapeType
