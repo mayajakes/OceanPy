@@ -9,11 +9,11 @@ class Shapefile(object):
 
     shpfile = ''
 
-    def __init__(self, shpfile=None, projin=None, projout=None, vert=False):
+    def __init__(self, shpfile=None, projin=None, projout=None, zaxis=False):
         self.shpfile = shpfile
         self.projin = projin
         self.projout = projout
-        self.get_coords(vert=vert)
+        self.get_coords(zaxis=zaxis)
         # self.get_patch()
 
     def read_shpfile(self):
@@ -22,11 +22,11 @@ class Shapefile(object):
         except shapefile.ShapefileException:
             self.reader = self.shpfile
 
-    def get_coords(self, vert):
+    def get_coords(self, zaxis):
         self.read_shpfile()
         self.coordinates = []
         for shape in self.reader.shapes():
-            if all([len(x) > 2 for x in shape.points]) and vert:
+            if all([len(x) > 2 for x in shape.points]) and zaxis:
                 for point in shape.points:
                     if self.projin is not None and self.projout is not None:
                         self.coordinates.append(pyproj.transform(self.projin, self.projout, point[0], point[1]) + (point[2],))
@@ -41,8 +41,15 @@ class Shapefile(object):
                         self.coordinates.append((point[0], point[1]))
 
     def transform_shapes(self):
-        if self.reader.shapeType == 1 or self.reader.shapeType == 3:
+        if self.reader.shapeType == 1:
             pass
+
+        elif self.reader.shapeType == 3:
+            self.writer = shapefile.Writer(shapeType=3)
+            for shape in self.reader.shapes():
+                for point in shape.points:
+                    pnt = pyproj.transform(self.projin, self.projout, point[0], point[1])
+                self.writer.poly(parts=[pnt])
         elif self.reader.shapeType == 5:
             self.writer = shapefile.Writer(shapefile.POLYGON)
             for shape in self.reader.shapes():
