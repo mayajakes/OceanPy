@@ -48,8 +48,8 @@ class Shapefile(object):
             self.writer = shapefile.Writer(shapeType=3)
             for shape in self.reader.shapes():
                 for point in shape.points:
-                    pnt = pyproj.transform(self.projin, self.projout, point[0], point[1])
-                self.writer.point(pnt)
+                    x, y = pyproj.transform(self.projin, self.projout, point[0], point[1])
+                    self.writer.point(x, y)
         elif self.reader.shapeType == 5:
             self.writer = shapefile.Writer(shapefile.POLYGON)
             for shape in self.reader.shapes():
