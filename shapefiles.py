@@ -70,8 +70,7 @@ def write_shpfile(coords, path=None):
         shpfile.point(x, y, z)
 
     if path is not None:
-        shpfile.field('COORDINATES')
-        shpfile.records('Coordinates')
+        shpfile.field(list(('DeletionFlag', 'C', 1, 0)))
         shpfile.save(path)
 
     return shpfile
