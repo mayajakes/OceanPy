@@ -69,7 +69,7 @@ def rotatexyz(x0, y0, z0, lstx, lsty, lstz, theta, dn=None):
         yprime.append(float(xyzprimetrans[1]))
         zprime.append(float(xyzprimetrans[2]))
 
-    return (xprime, yprime, zprime)
+    return xprime, yprime, zprime
 
 def rotatexyz_pnt(x0, y0, z0, x, y, z, theta):
 
@@ -144,7 +144,7 @@ def rotatexy(x0, y0, lstx, lsty, theta, dn=None):
         xprime.append(float(xyprimetrans[0]))
         yprime.append(float(xyprimetrans[1]))
 
-    return (xprime, yprime)
+    return xprime, yprime
 
 def rotatexy_pnt(x0, y0, x, y, theta):
 
