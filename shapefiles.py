@@ -49,7 +49,7 @@ class Shapefile(object):
             for shape in self.reader.shapes():
                 for point in shape.points:
                     pnt = pyproj.transform(self.projin, self.projout, point[0], point[1])
-                self.writer.poly(parts=[pnt])
+                self.writer.point(pnt)
         elif self.reader.shapeType == 5:
             self.writer = shapefile.Writer(shapefile.POLYGON)
             for shape in self.reader.shapes():
