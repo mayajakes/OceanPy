@@ -9,10 +9,11 @@ class Shapefile(object):
 
     shpfile = ''
 
-    def __init__(self, shpfile=None, projin=None, projout=None):
+    def __init__(self, shpfile=None, projin=None, projout=None, vert=False):
         self.shpfile = shpfile
         self.projin = projin
         self.projout = projout
+        self.vert =vert
         self.get_coords()
         # self.get_patch()
 
@@ -22,22 +23,23 @@ class Shapefile(object):
         except shapefile.ShapefileException:
             self.reader = self.shpfile
 
-    def get_coords(self):
+    def get_coords(self, vert):
         self.read_shpfile()
         self.coordinates = []
         for shape in self.reader.shapes():
-            if all([len(x) > 2 for x in shape.points]):
-                for x, y, z, _ in shape.points:
+            if all([len(x) > 2 for x in shape.points]) and vert:
+                for point in shape.points:
                     if self.projin is not None and self.projout is not None:
-                        self.coordinates.append(pyproj.transform(self.projin, self.projout, x, y) + (z,))
+                        self.coordinates.append(pyproj.transform(self.projin, self.projout, point[0], point[1]) + (point[2],))
                     else:
-                        self.coordinates.append((x, y, z))
+                        self.coordinates.append((point[0], point[1], point[2]))
+
             else:
-                for x, y in shape.points:
+                for point in shape.points:
                     if self.projin is not None and self.projout is not None:
-                        self.coordinates.append(pyproj.transform(self.projin, self.projout, x, y))
+                        self.coordinates.append(pyproj.transform(self.projin, self.projout, point[0], point[1]))
                     else:
-                        self.coordinates.append((x, y))
+                        self.coordinates.append((point[0], point[1]))
 
     def transform_shapes(self):
         if self.reader.shapeType == 1 or self.reader.shapeType == 3:
