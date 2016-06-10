@@ -13,8 +13,7 @@ class Shapefile(object):
         self.shpfile = shpfile
         self.projin = projin
         self.projout = projout
-        self.vert =vert
-        self.get_coords()
+        self.get_coords(vert=vert)
         # self.get_patch()
 
     def read_shpfile(self):
