@@ -62,7 +62,7 @@ class Shapefile(object):
 
 def shapes_in_polygons(shpfile_shapes, shpfile_polygons):
 
-    if shpfile_shapes.shapeType == 1:
+    if shpfile_shapes.shapeType == 1 or shpfile_shapes.shapeType == 3:
         shapes = shapefile.Writer(shapeType=1)
         for shape in shpfile_shapes.shapes():
             point = slgeo.Point(shape.points[0])
