@@ -26,11 +26,18 @@ class Shapefile(object):
         self.read_shpfile()
         self.coordinates = []
         for shape in self.reader.shapes():
-            for x, y in shape.points:
-                if self.projin is not None and self.projout is not None:
-                    self.coordinates.append(pyproj.transform(self.projin, self.projout, x, y))
-                else:
-                    self.coordinates.append((x, y))
+            if all([len(x) > 2 for x in shape.points]):
+                for x, y, z, _ in shape.points:
+                    if self.projin is not None and self.projout is not None:
+                        self.coordinates.append(pyproj.transform(self.projin, self.projout, x, y) + (z,))
+                    else:
+                        self.coordinates.append((x, y, z))
+            else:
+                for x, y in shape.points:
+                    if self.projin is not None and self.projout is not None:
+                        self.coordinates.append(pyproj.transform(self.projin, self.projout, x, y))
+                    else:
+                        self.coordinates.append((x, y))
 
     def transform_shapes(self):
         if self.reader.shapeType == 1 or self.reader.shapeType == 3:
