@@ -72,11 +72,11 @@ def shapes_in_polygons(shpfile_shapes, shpfile_polygons,):
                     if slgeo.Polygon(poly).contains(point):
                         shapes.point(x=shape.points[0][0], y=shape.points[0][1])
                         shapes.field(shpfile_shapes.fields)
-                        shapes.record(rec)
+                        shapes.record(rec[0], rec[1])
                 elif slgeo.Polygon(poly.points[0]).contains(point):
                     shapes.point(x=shape.point[0][0], y=shape.point[0][1])
                     shapes.field(shpfile_shapes.fields)
-                    shapes.record(rec)
+                    shapes.record(rec[0], rec[1])
 
                 for s in shapes.shapes():
                     s.shapeType = shpfile_shapes.shapeType
