@@ -60,10 +60,12 @@ class Shapefile(object):
                 self.writer.poly(parts=[poly])
         return self.writer
 
-def shapes_in_polygons(shpfile_shapes, shpfile_polygons,):
+def shapes_in_polygons(shpfile_shapes, shpfile_polygons, path=None):
 
     if shpfile_shapes.shapeType == 1 or shpfile_shapes.shapeType == 3:
         shapes = shapefile.Writer(shapeType=shpfile_shapes.shapeType)
+        shapes.field(shpfile_shapes.fields[1][0], shpfile_shapes.fields[1][1],
+                     shpfile_shapes.fields[1][2], shpfile_shapes.fields[1][3])
         for shape, rec in zip(shpfile_shapes.shapes(), shpfile_shapes.records()):
             point = slgeo.Point(shape.points[0])
             for poly in shpfile_polygons.shapes():
@@ -71,17 +73,16 @@ def shapes_in_polygons(shpfile_shapes, shpfile_polygons,):
                     poly = [[x, y] for x, y, _, _ in poly.points]
                     if slgeo.Polygon(poly).contains(point):
                         shapes.point(x=shape.points[0][0], y=shape.points[0][1])
-                        shapes.field(shpfile_shapes.fields[1][0], shpfile_shapes.fields[1][1],
-                                     shpfile_shapes.fields[1][2], shpfile_shapes.fields[1][3])
-                        shapes.record(rec[:][0])
+                        shapes.record(rec[0], 'Point')
                 elif slgeo.Polygon(poly.points[0]).contains(point):
                     shapes.point(x=shape.point[0][0], y=shape.point[0][1])
-                    shapes.field(shpfile_shapes.fields[1][0], shpfile_shapes.fields[1][1],
-                                 shpfile_shapes.fields[1][2], shpfile_shapes.fields[1][3])
-                    shapes.record(rec[:][0])
+                    shapes.record(rec[0], 'Point')
 
                 for s in shapes.shapes():
                     s.shapeType = shpfile_shapes.shapeType
+            if path is not None:
+                shapes.save(path)
+
         return shapes
     else:
         pass
