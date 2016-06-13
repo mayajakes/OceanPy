@@ -144,7 +144,7 @@ def rotatexy(x0, y0, lstx, lsty, theta, dn=None):
         xyprimetrans = np.dot(trans, xyprimerot)
         # xprime.append(float(xyprimetrans[0]))
         # yprime.append(float(xyprimetrans[1]))
-        coords.append(float(xyprimetrans[0]),float(xyprimetrans[1]))
+        coords + (float(xyprimetrans[0]),float(xyprimetrans[1]))
     # return xprime, yprime
     return coords
 
