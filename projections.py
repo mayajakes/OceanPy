@@ -134,17 +134,19 @@ def rotatexy(x0, y0, lstx, lsty, theta, dn=None):
     else:
         xyvector = [np.matrix([[lstx[i]],[lsty[i]],[1]]) for i in range(0,len(lstx))]
 
-    xprime = []
-    yprime = []
+    # xprime = []
+    # yprime = []
+    coords = []
 
     for a in xyvector:
         xyprimeinv = np.dot(inv_trans,a)
         xyprimerot = np.dot(rot, xyprimeinv)
         xyprimetrans = np.dot(trans, xyprimerot)
-        xprime.append(float(xyprimetrans[0]))
-        yprime.append(float(xyprimetrans[1]))
-
-    return xprime, yprime
+        # xprime.append(float(xyprimetrans[0]))
+        # yprime.append(float(xyprimetrans[1]))
+        coords.append(float(xyprimetrans[0]),float(xyprimetrans[1]))
+    # return xprime, yprime
+    return coords
 
 def rotatexy_pnt(x0, y0, x, y, theta):
 
