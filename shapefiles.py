@@ -60,7 +60,7 @@ class Shapefile(object):
                 self.writer.poly(parts=[poly])
         return self.writer
 
-def shapes_in_polygons(shpfile_shapes, shpfile_polygons):
+def shapes_in_polygons(shpfile_shapes, shpfile_polygons, zaxis=False):
 
     if shpfile_shapes.shapeType == 1 or shpfile_shapes.shapeType == 3:
         shapes = shapefile.Writer(shapeType=shpfile_shapes.shapeType)
@@ -71,14 +71,20 @@ def shapes_in_polygons(shpfile_shapes, shpfile_polygons):
         for i, shape in enumerate(shpfile_shapes.shapes()):
             point = slgeo.Point(shape.points[0])
             for poly in shpfile_polygons.shapes():
-                if all([len(x) > 2 for x in poly.points]):
+                if all([len(x) > 2 for x in poly.points]) and zaxis:
                     poly = [[x, y] for x, y, _, _ in poly.points]
                     if slgeo.Polygon(poly).contains(point):
-                        shapes.point(x=shape.points[0][0], y=shape.points[0][1])
+                        if zaxis:
+                            shapes.point(x=shape.points[0][0], y=shape.points[0][1], z=shape.points[0][2])
+                        else:
+                            shapes.point(x=shape.points[0][0], y=shape.points[0][1])
                         if isinstance(shpfile_shapes.records, list) is False:
                             shapes.records.append(shpfile_shapes.records()[i])
                 elif slgeo.Polygon(poly.points[0]).contains(point):
-                    shapes.point(x=shape.point[0][0], y=shape.point[0][1])
+                    if zaxis:
+                        shapes.point(x=shape.points[0][0], y=shape.points[0][1], z=shape.points[0][2])
+                    else:
+                        shapes.point(x=shape.point[0][0], y=shape.point[0][1])
                     if isinstance(shpfile_shapes.records, list) is False:
                         shapes.records.append(shpfile_shapes.records()[i])
 
