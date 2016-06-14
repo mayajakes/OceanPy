@@ -68,19 +68,17 @@ def shapes_in_polygons(shpfile_shapes, shpfile_polygons, path=None):
             for field in shpfile_shapes.fields:
                 shapes.field(field[0], field[1], field[2], field[3])
 
-        for shape in shpfile_shapes.shapes():
+        for i, shape in enumerate(shpfile_shapes.shapes()):
             point = slgeo.Point(shape.points[0])
             for poly in shpfile_polygons.shapes():
                 if all([len(x) > 2 for x in poly.points]):
                     poly = [[x, y] for x, y, _, _ in poly.points]
                     if slgeo.Polygon(poly).contains(point):
                         shapes.point(x=shape.points[0][0], y=shape.points[0][1])
+                        if isinstance(shpfile_shapes.records, list) is False:
+                            shapes.record(shpfile_shapes.records()[i])
                 elif slgeo.Polygon(poly.points[0]).contains(point):
                     shapes.point(x=shape.point[0][0], y=shape.point[0][1])
-
-        # if isinstance(shpfile_shapes.records, list) is False:
-        #     for rec in shpfile_shapes.records():
-        #         shapes.record(rec)
 
         for s in shapes.shapes():
             s.shapeType = shpfile_shapes.shapeType
