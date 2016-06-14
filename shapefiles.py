@@ -96,7 +96,6 @@ def shapes_in_polygons(shpfile_shapes, shpfile_polygons, path=None):
         if len(shpfile_shapes.fields) > 0:
             for field in shpfile_shapes.fields:
                 shapes.field(field[0], field[1], field[2], field[3])
-        if isinstance(shpfile_shapes.records, list) is False:
             for shape, rec in zip(shpfile_shapes.shapes(), shpfile_shapes.records()):
                 point = slgeo.Point(shape.points[0])
                 for poly in shpfile_polygons.shapes():
