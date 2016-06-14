@@ -66,7 +66,10 @@ def shapes_in_polygons(shpfile_shapes, shpfile_polygons, path=None):
         shapes = shapefile.Writer(shapeType=shpfile_shapes.shapeType)
         if len(shpfile_shapes.fields) > 0:
             for field in shpfile_shapes.fields:
-                shapes.field(field[0], field[1], field[2], field[3])
+                if shpfile_shapes.fields[0][0].startswith("Deletion"):
+                    pass
+                else:
+                    shapes.field(field[0], field[1], field[2], field[3])
 
         for shape in shpfile_shapes.shapes():
             point = slgeo.Point(shape.points[0])
@@ -78,9 +81,9 @@ def shapes_in_polygons(shpfile_shapes, shpfile_polygons, path=None):
                 elif slgeo.Polygon(poly.points[0]).contains(point):
                     shapes.point(x=shape.point[0][0], y=shape.point[0][1])
 
-        # if isinstance(shpfile_shapes.records, list) is False:
-        #     for rec in shpfile_shapes.records():
-        #         shapes.record(rec)
+        if isinstance(shpfile_shapes.records, list) is False:
+            for rec in shpfile_shapes.records():
+                shapes.record(rec)
 
         for s in shapes.shapes():
             s.shapeType = shpfile_shapes.shapeType
