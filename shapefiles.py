@@ -71,7 +71,7 @@ def shapes_in_polygons(shpfile_shapes, shpfile_polygons, zaxis=False):
         for i, shape in enumerate(shpfile_shapes.shapes()):
             point = slgeo.Point(shape.points[0])
             for poly in shpfile_polygons.shapes():
-                if all([len(x) > 2 for x in poly.points]) and zaxis:
+                if all([len(x) > 2 for x in poly.points]):
                     poly = [[x, y] for x, y, _, _ in poly.points]
                     if slgeo.Polygon(poly).contains(point):
                         if zaxis:
