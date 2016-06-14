@@ -68,33 +68,37 @@ def shapes_in_polygons(shpfile_shapes, shpfile_polygons, path=None):
             for field in shpfile_shapes.fields:
                 shapes.field(field[0], field[1], field[2], field[3])
 
-        try:
-            for shape, rec in zip(shpfile_shapes.shapes(), shpfile_shapes.records()):
-                point = slgeo.Point(shape.points[0])
-                for poly in shpfile_polygons.shapes():
-                    if all([len(x) > 2 for x in poly.points]):
-                        poly = [[x, y] for x, y, _, _ in poly.points]
-                        if slgeo.Polygon(poly).contains(point):
-                            shapes.point(x=shape.points[0][0], y=shape.points[0][1])
-                            shapes.record(rec)
-                    elif slgeo.Polygon(poly.points[0]).contains(point):
-                        shapes.point(x=shape.point[0][0], y=shape.point[0][1])
-                        shapes.record(rec)
-        except TypeError:
-            for shape in shpfile_shapes.shapes():
-                point = slgeo.Point(shape.points[0])
-                for poly in shpfile_polygons.shapes():
-                    if all([len(x) > 2 for x in poly.points]):
-                        poly = [[x, y] for x, y, _, _ in poly.points]
-                        if slgeo.Polygon(poly).contains(point):
-                            shapes.point(x=shape.points[0][0], y=shape.points[0][1])
-                    elif slgeo.Polygon(poly.points[0]).contains(point):
-                        shapes.point(x=shape.point[0][0], y=shape.point[0][1])
+        for shape in shpfile_shapes.shapes():
+            point = slgeo.Point(shape.points[0])
+            for poly in shpfile_polygons.shapes():
+                if all([len(x) > 2 for x in poly.points]):
+                    poly = [[x, y] for x, y, _, _ in poly.points]
+                    if slgeo.Polygon(poly).contains(point):
+                        shapes.point(x=shape.points[0][0], y=shape.points[0][1])
+                elif slgeo.Polygon(poly.points[0]).contains(point):
+                    shapes.point(x=shape.point[0][0], y=shape.point[0][1])
 
-                for s in shapes.shapes():
-                    s.shapeType = shpfile_shapes.shapeType
-            if path is not None:
-                shapes.save(path)
+        try:
+            for rec in shpfile_shapes.records():
+                shapes.record(rec)
+        except TypeError:
+            pass
+        # except TypeError:
+        #     for shape in shpfile_shapes.shapes():
+        #         point = slgeo.Point(shape.points[0])
+        #         for poly in shpfile_polygons.shapes():
+        #             if all([len(x) > 2 for x in poly.points]):
+        #                 poly = [[x, y] for x, y, _, _ in poly.points]
+        #                 if slgeo.Polygon(poly).contains(point):
+        #                     shapes.point(x=shape.points[0][0], y=shape.points[0][1])
+        #             elif slgeo.Polygon(poly.points[0]).contains(point):
+        #                 shapes.point(x=shape.point[0][0], y=shape.point[0][1])
+
+        for s in shapes.shapes():
+            s.shapeType = shpfile_shapes.shapeType
+
+        if path is not None:
+            shapes.save(path)
 
         return shapes
     else:
