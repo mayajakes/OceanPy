@@ -64,8 +64,11 @@ def shapes_in_polygons(shpfile_shapes, shpfile_polygons, path=None):
 
     if shpfile_shapes.shapeType == 1 or shpfile_shapes.shapeType == 3:
         shapes = shapefile.Writer(shapeType=shpfile_shapes.shapeType)
-        shapes.field(shpfile_shapes.fields[1][0], shpfile_shapes.fields[1][1],
-                     shpfile_shapes.fields[1][2], shpfile_shapes.fields[1][3])
+        if len(shpfile_shapes.fields) > 0:
+            for field in shpfile_shapes.fields:
+                shapes.field(field)
+        # shapes.field(shpfile_shapes.fields[1][0], shpfile_shapes.fields[1][1],
+        #              shpfile_shapes.fields[1][2], shpfile_shapes.fields[1][3])
         for shape, rec in zip(shpfile_shapes.shapes(), shpfile_shapes.records()):
             point = slgeo.Point(shape.points[0])
             for poly in shpfile_polygons.shapes():
