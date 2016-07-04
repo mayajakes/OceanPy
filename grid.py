@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.interpolate import griddata
 
-def grid_ascii(x, y, var, res_x, res_y):
+def ascii(x, y, var, res_x, res_y):
 
     nx = int((max(x) - min(x)) / res_x)+1
     ny = int((max(y) - min(y)) / res_y)+1
