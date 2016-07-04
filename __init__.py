@@ -12,3 +12,4 @@ from OceanPy.projections import *
 from OceanPy.readwrite import *
 from OceanPy.shapefiles import *
 from OceanPy.ssh import *
+from OceanPy.grid import *
