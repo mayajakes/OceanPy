@@ -1,6 +1,7 @@
 __author__ = 'jaap.meijer'
 
 import numpy as np
+import os
 
 def readxyz(filename,step=None,xy=False):
 
@@ -82,22 +83,31 @@ def readxytxt(filename):
 
     return x, y
 
-def write_ascii(filename, array, xll, yll, cellsize):
-    header = "ncols     %s\n" % array.shape[1]
-    header += "nrows    %s\n" % array.shape[0]
-    header += "xllcorner %f\n" % xll
-    header += "yllcorner %f\n" % yll
-    header += "cellsize %f\n" % cellsize
-    header += "NODATA_value -9999\n"
+def write_ascii(filename, array, xll, yll, cellsize, nodata=int(-9999)):
 
-    np.savetxt(filename, array, header=header, fmt="%1.4f")
+    header = {'ncols': array.shape[1], 'nrows': array.shape[0], 'xllcorner': xll, 'yllcorner': yll,
+              'cellsize': cellsize, 'NODATA_value': nodata}
 
+    if not os.path.exists(filename):
+        os.makedirs(os.path.dirname(filename))
 
-def header_ascii(filename, info):
+    array[np.isnan(array)] = nodata
+    # np.savetxt(filename, np.flipud(array), header=header, comments='', fmt="%1.4f")
+
+    delimiter = '\t'
+    fmt="%1.4f"
+    with open(filename, 'w') as f:
+        for key in header.keys():
+            f.write(key + '\t%s\n' % header[key])
+        for row in np.flipud(array):
+            line = delimiter.join("-9999" if value == nodata else fmt % value for value in row)
+            f.write(line + '\n')
+
+def read_ascii_header(filename, info=None):
 
     import linecache
     if info is None:
-        info = ['ncols', 'nrows', 'xllcorner', 'yllcorner', 'cellsize']
+        info = ['ncols', 'nrows', 'xllcorner', 'yllcorner', 'cellsize', 'NODATA_value']
 
     header = {}
     for (i, var) in enumerate(info):

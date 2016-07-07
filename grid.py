@@ -14,7 +14,7 @@ def xyz_in_rectangle(x, y, z, ll, lr, ur, ul):
 
     return xrect, yrect, zrect
 
-def ascii(x, y, var, dx, dy):
+def ascii(x, y, z, dx, dy):
 
     nx = int((max(x) - min(x)) / dx)+1
     ny = int((max(y) - min(y)) / dy)+1
@@ -22,20 +22,20 @@ def ascii(x, y, var, dx, dy):
     yi = np.linspace(min(y), max(y), ny)
 
     xgrid, ygrid = np.meshgrid(xi, yi)
-    vargrid = griddata((x, y), var, (xgrid, ygrid), method='linear')
+    vargrid = griddata((x, y), z, (xgrid, ygrid), method='linear')
 
     return xgrid, ygrid, vargrid
 
-def xbeach(x, y, z, xori, yori, alfa, dx, dy, xdist, ydist):
+def xbeach(x, y, z, xori, yori, alfa, dist_cross, dist_along, dx, dy): #, dist_cross, dist_along
     ''' alfa is the coastal orientation angle '''
 
     rot_coords = rotatexy(xori, yori, x, y, alfa)
     xprime, yprime = list(zip(*rot_coords))
 
-    nx = int((max(xprime) - min(xprime)) / dx) + 1
-    ny = int((max(yprime) - min(yprime)) / dy) + 1
-    xi = np.linspace(min(xprime), max(xprime), nx)
-    yi = np.linspace(min(yprime), max(yprime), ny)
+    nx = int(dist_cross / dx) + 1
+    ny = int(dist_along / dy) + 1
+    xi = np.linspace(xori, xori+dist_cross, nx)
+    yi = np.linspace(yori, yori+dist_along, ny)
 
     xgrid, ygrid = np.meshgrid(xi, yi)
     zb = griddata((xprime, yprime), z, (xgrid, ygrid), method='linear')
@@ -45,10 +45,10 @@ def xbeach(x, y, z, xori, yori, alfa, dx, dy, xdist, ydist):
 
     grid_coords = rotatexy(xori, yori, xgrid_flat, ygrid_flat, -alfa)
 
-    x, y = list(zip(*grid_coords))
+    xg, yg = list(zip(*grid_coords))
 
-    xgrid = np.reshape(x, xgrid.shape)
-    ygrid = np.reshape(y, ygrid.shape)
+    xgrid = np.reshape(xg, xgrid.shape)
+    ygrid = np.reshape(yg, ygrid.shape)
 
     return xgrid, ygrid, zb
 
