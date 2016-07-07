@@ -29,6 +29,10 @@ def sftp_copy_dir(localpath, remotepath, hostname, username, password):
     parent=os.path.split(localpath)[1]
     for walker in os.walk(parent):
         try:
+            sftp.mkdir(remotepath.replace('\\','/'))
+        except:
+            pass
+        try:
             sftp.mkdir(os.path.join(remotepath,walker[0]).replace('\\','/'))
         except:
             pass

@@ -82,6 +82,29 @@ def readxytxt(filename):
 
     return x, y
 
+def write_ascii(filename, array, xll, yll, cellsize):
+    header = "ncols     %s\n" % array.shape[1]
+    header += "nrows    %s\n" % array.shape[0]
+    header += "xllcorner %f\n" % xll
+    header += "yllcorner %f\n" % yll
+    header += "cellsize %f\n" % cellsize
+    header += "NODATA_value -9999\n"
+
+    np.savetxt(filename, array, header=header, fmt="%1.4f")
+
+
+def header_ascii(filename, info):
+
+    import linecache
+    if info is None:
+        info = ['ncols', 'nrows', 'xllcorner', 'yllcorner', 'cellsize']
+
+    header = {}
+    for (i, var) in enumerate(info):
+        var, val = linecache.getline(filename, i+1).split()
+        header[var] = float(val)
+    return header
+
 def readxls(filename, colnos, rowstart = 0, sheetno = 0):
     import xlrd
 
