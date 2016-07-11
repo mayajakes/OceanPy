@@ -111,6 +111,7 @@ def write_ascii(filename, array, xll, yll, cellsize, nodata=int(-9999)):
             line = delimiter.join("-9999" if value == nodata else fmt % value for value in row)
             f.write(line + '\n')
 
+
 def read_ascii_header(filename, info=None):
 
     import linecache
@@ -122,6 +123,18 @@ def read_ascii_header(filename, info=None):
         var, val = linecache.getline(filename, i+1).split()
         header[var] = float(val)
     return header
+
+
+def read_ascii(filename, nodata='-9999'):
+
+    header = read_ascii_header(filename)
+
+    array = np.genfromtxt(filename, skip_header=6, missing_values=nodata, usemask=True).filled(np.nan)
+
+    return array, header
+
+
+
 
 def readxls(filename, colnos, rowstart = 0, sheetno = 0):
     import xlrd
