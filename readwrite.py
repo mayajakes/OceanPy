@@ -84,9 +84,17 @@ def readxytxt(filename):
     return x, y
 
 def write_ascii(filename, array, xll, yll, cellsize, nodata=int(-9999)):
+    import collections
 
-    header = {'ncols': array.shape[1], 'nrows': array.shape[0], 'xllcorner': xll, 'yllcorner': yll,
-              'cellsize': cellsize, 'NODATA_value': nodata}
+    # header = {'ncols': array.shape[1], 'nrows': array.shape[0], 'xllcorner': xll, 'yllcorner': yll,
+    #           'cellsize': cellsize, 'NODATA_value': nodata}
+
+    header = collections.OrderedDict((('ncols', array.shape[1]),
+                                     ('nrows', array.shape[0]),
+                                     ('xllcorner', xll),
+                                     ('yllcorner', yll),
+                                     ('cellsize', cellsize),
+                                     ('NODATA_value', nodata)))
 
     if not os.path.exists(filename):
         os.makedirs(os.path.dirname(filename))
