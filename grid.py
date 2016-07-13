@@ -26,6 +26,16 @@ def ascii(x, y, z, dx, dy):
 
     return xgrid, ygrid, vargrid
 
+def ascii_fromheader(header):
+    xi = np.linspace(header['xllcorner'], header['xllcorner'] + header['cellsize'] * header['ncols'], header['ncols'],
+                     endpoint=False)
+    yi = np.linspace(header['yllcorner'], header['yllcorner'] + header['cellsize'] * header['nrows'], header['nrows'],
+                     endpoint=False)
+    xgrid, ygrid = np.meshgrid(xi, yi)
+
+    return xgrid, ygrid
+
+
 def xbeach(x, y, z, xori, yori, alfa, dist_cross, dist_along, dx, dy): #, dist_cross, dist_along
     ''' alfa is the coastal orientation angle '''
 
