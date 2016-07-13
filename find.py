@@ -52,6 +52,21 @@ def find_closest(array,value):
     idx = (np.abs(array-value)).argmin()
     return idx#, array[idx]
 
+def closestgridpnt(coords, xgrid, ygrid):
+    """ FIND COORDINATE IN GRID CLOSEST TO PREDEFINED COORDINATES """
+
+    from scipy import spatial
+
+    # gridID = []
+    griddata = list(zip(xgrid.ravel(), ygrid.ravel()))
+    gridcoords = []
+    for coord in coords:
+        _, index = spatial.KDTree(griddata).query(coord)
+        # gridpt = grid[spatial.KDTree(grid).query(pt)[1]] # or grid[index]
+        # gridID.append(grid_inds[index])
+        gridcoords.append(griddata[index])
+    return gridcoords
+
 # def findy(lst, lat1, lat2):
 #     result = []
 #     for index, i in enumerate(lst):
