@@ -129,7 +129,7 @@ def read_ascii(filename, nodata='-9999'):
 
     header = read_ascii_header(filename)
 
-    array = np.genfromtxt(filename, skip_header=6, missing_values=nodata, usemask=True).filled(np.nan)
+    array = np.flipud(np.genfromtxt(filename, skip_header=6, missing_values=nodata, usemask=True).filled(np.nan))
 
     return array, header
 

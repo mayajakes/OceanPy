@@ -6,10 +6,10 @@ from OceanPy.find import *
 from OceanPy.interpolation import *
 from OceanPy.maps import *
 from OceanPy.meteorology import *
-from OceanPy.nc_animation import *
+from OceanPy.animations import *
 from OceanPy.plot import *
 from OceanPy.projections import *
 from OceanPy.readwrite import *
 from OceanPy.shapefiles import *
-from OceanPy.ssh import *
+from OceanPy.remote import *
 from OceanPy.grid import *
