@@ -10,7 +10,8 @@ __email__ = 'janjaapmeijer@gmail.com'
 import os
 
 from matplotlib import animation
-from pylab import *
+# from pylab import *
+from netCDF4 import Dataset
 from OceanPy.colormaps import *
 from OpenEarthTools.plot.colormap_vaklodingen import *
 
@@ -27,9 +28,55 @@ def __init__(self, filename=None):#
 #     self.y = 0
 #     self.z = 0)
 
-def play(x, y, z, cmin=None, cmax=None, save=False):
+def play1D(t, x, y):
+    fig, ax = plt.subplots()
+    graph, = ax.plot(x, y[0])
+
+    def init():
+        graph.set_data([], [])
+        return graph
+
+    def animate(i):
+        graph.set_data(x, y[i])
+        return graph
+
+    anim = animation.FuncAnimation(fig, animate, frames=len(t), init_func=init, interval=100, blit=False)
+
+    plt.show()
+
+    return anim
+
+def play1D_vars(vararray, t, x, y=None, colors=None):
+    if y is not None:
+        dist = [0]
+        for i in range(0, len(x)-1):
+            dist.append(dist[i] + np.sqrt((x[i+1] - x[i])**2 + (y[i+1] - y[i])**2))
+        x=dist
+
     fig = plt.figure()
-    ax = plt.subplot(111)
+    ax = plt.axes(xlim=(x[0], x[-1]), ylim=(vararray.min(), vararray.max()))
+
+    graphs = [ax.plot([], [], color=colors[j])[0] for j in range(vararray.shape[0])]
+
+    def init():
+        for graph in graphs:
+            graph.set_data([], [])
+        return graphs
+
+    def animate(i):
+        for gnum, graph in enumerate(graphs):
+            graph.set_data(x, vararray[gnum, i])
+        return graphs
+
+    anim = animation.FuncAnimation(fig, animate, frames=len(t), init_func=init, interval=100, blit=False)
+
+    plt.show()
+
+    return anim
+
+
+def play2D(x, y, z, cmin=None, cmax=None, save=False):
+    fig, ax = plt.subplot(111)
     ax.set_aspect('equal')
     pcol = plt.pcolor(x,y,z[0])
 
