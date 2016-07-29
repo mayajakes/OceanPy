@@ -76,14 +76,15 @@ def play1D_vars(vararray, t, x, y=None, colors=None):
 
 
 def play2D(x, y, z, cmin=None, cmax=None, save=False):
-    fig, ax = plt.subplot(111)
+    fig = plt.figure()
+    ax = plt.subplot()
     ax.set_aspect('equal')
     pcol = plt.pcolor(x,y,z[0])
 
     # pcol.set_clim([0,1])
     fig.colorbar(pcol,ax=ax)
 
-    tight_layout()
+    plt.tight_layout()
 
     def init():
         pcol.set_array([])
@@ -100,7 +101,7 @@ def play2D(x, y, z, cmin=None, cmax=None, save=False):
         return pcol
 
     # call the animator.  blit=True means only re-draw the parts that have changed.
-    anim = animation.FuncAnimation(fig, animate, frames=shape(z)[0], init_func=init, interval=1, blit=False)
+    anim = animation.FuncAnimation(fig, animate, frames=z.shape[0], init_func=init, interval=1, blit=False)
 
     def nc_animation_save(path, filename, dpi):
         writer = animation.writers['ffmpeg'](fps=30)

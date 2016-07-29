@@ -96,7 +96,7 @@ def write_ascii(filename, array, xll, yll, cellsize, nodata=int(-9999)):
                                      ('cellsize', cellsize),
                                      ('NODATA_value', nodata)))
 
-    if not os.path.exists(filename):
+    if not os.path.exists(os.path.dirname(filename)):
         os.makedirs(os.path.dirname(filename))
 
     array[np.isnan(array)] = nodata
@@ -112,7 +112,7 @@ def write_ascii(filename, array, xll, yll, cellsize, nodata=int(-9999)):
             f.write(line + '\n')
 
 
-def read_ascii_header(filename, info=None):
+def read_asciiheader(filename, info=None):
 
     import linecache
     if info is None:
@@ -127,7 +127,7 @@ def read_ascii_header(filename, info=None):
 
 def read_ascii(filename, nodata='-9999'):
 
-    header = read_ascii_header(filename)
+    header = read_asciiheader(filename)
 
     array = np.flipud(np.genfromtxt(filename, skip_header=6, missing_values=nodata, usemask=True).filled(np.nan))
 
@@ -149,33 +149,3 @@ def readxls(filename, colnos, rowstart = 0, sheetno = 0):
         x.append(sheet.cell_value(row,colnos[0]))
         y.append(sheet.cell_value(row,colnos[1]))
     return x, y
-
-
-# def readdata(filename, ncols, nhead):
-#     with open(filename, 'r') as file:
-#         data = file.read()
-#
-#         if ncols > 6 or ncols < 2:
-#             print('Function not applicable for the number of colums: ' + str(ncols))
-#         elif ncols == 2:
-#             var1=[]; var2=[]
-#         elif ncols == 3:
-#             var1=[]; var2=[]; var3=[]
-#         elif ncols == 4:
-#             var1=[]; var2=[]; var3=[]; var4=[]
-#         elif ncols == 5:
-#             var1=[]; var2=[]; var3=[]; var4=[]; var5=[]
-#         elif ncols == 6:
-#             var1=[]; var2=[]; var3=[]; var4=[]; var5=[]; var6=[]
-#
-#             for line in data:
-#                 if ncols == 2:
-#                     v1, v2 = line.split()
-#                 elif ncols == 3:
-#
-#                 elif ncols == 4:
-#
-#                 elif ncols == 5:
-#
-#                 elif ncols == 6:
-#

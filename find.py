@@ -34,8 +34,9 @@ def find_nanstr(lst_str):
             result.append(index)
     return result
 
-""" FIND STRING IN LIST/SERIES OF STRINGS"""
 def find_str(lst_str,string):
+    """ FIND STRING IN LIST/SERIES OF STRINGS"""
+
     import pandas as pd
     if type(string) == str:
         result = []
@@ -46,8 +47,9 @@ def find_str(lst_str,string):
     else:
         print('input value is not a string')
 
-""" FIND INDEX IN LIST CLOSEST TO PREDEFINED VALUE """
 def find_closest(array,value):
+    """ FIND INDEX IN LIST CLOSEST TO PREDEFINED VALUE """
+
     import numpy as np
     idx = (np.abs(array-value)).argmin()
     return idx#, array[idx]
