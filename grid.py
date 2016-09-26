@@ -62,4 +62,6 @@ def xbeach(x, y, z, xori, yori, alfa, dist_cross, dist_along, dx, dy): #, dist_c
 
     return xgrid, ygrid, zb
 
-
+# def xbeach1D(nonh=False):
+#     if nonh:
+#

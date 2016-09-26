@@ -43,6 +43,11 @@ def weibull_params(var):
 # stats.exponweib.cdf()
 # plt.plot((1 / (1-stats.exponweib.cdf(xmodel, *stats.exponweib.fit(np.array(annualmax))))), xmodel, 'm--', label='Weibull fit')
 
+def gpd_params(var):
+    ''' Optimisation parameters for the Generalised Pareto Distribution '''
+    c, mu, beta = stats.genpareto.fit(np.array(var))
+    return c, mu, beta
+
 
 #Gringorten (1963) plotting position formula
 def gringorten_ppf(time,x):
@@ -52,6 +57,25 @@ def gringorten_ppf(time,x):
     r = sorted(comb, key=lambda x: x[1], reverse=True)
 
     T_Rr = [(N + 0.12) / (i+1 - 0.44) for i in range(0,N)]
+    temp = [r[i] + (T_Rr[i],) for i in range(0,N)]
+    sortontime = sorted(temp, key=lambda x: x[0])
+
+    time,x,T_R=zip(*sortontime)
+    time = list(time)
+    x = list(x)
+    T_R = list(T_R)
+
+    y = [-np.log( -np.log(1 - (1 / T_R[i]))) for i in range(0,N)]
+
+    return T_R, y, time, x
+
+def weibull_ppf(time, x):
+    comb = tuple(zip(time,x))
+    N = len(x)
+    r = sorted(comb, key=lambda x: x[1], reverse=True)
+
+
+    T_Rr = [N / (i + 1) for i in range(0,N)]
     temp = [r[i] + (T_Rr[i],) for i in range(0,N)]
     sortontime = sorted(temp, key=lambda x: x[0])
 

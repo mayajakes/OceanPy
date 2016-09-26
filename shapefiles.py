@@ -9,10 +9,11 @@ class Shapefile(object):
 
     shpfile = ''
 
-    def __init__(self, shpfile=None, projin=None, projout=None, zaxis=False):
+    def __init__(self, shpfile=None, projin=None, projout=None, pathwrite=None, zaxis=False):
         self.shpfile = shpfile
         self.projin = projin
         self.projout = projout
+        # self.pathwrite = pathwrite
         self.get_coords(zaxis=zaxis)
         # self.get_patch()
 
@@ -59,6 +60,33 @@ class Shapefile(object):
                     poly.append(list(pyproj.transform(self.projin, self.projout, point[0], point[1])))
                 self.writer.poly(parts=[poly])
         return self.writer
+
+    # def write_shpfile(self, ):
+    #     if self.reader.shape
+    # #     self.reader
+    # #     self.save(pathwrite)
+
+
+def write_shpfile(shapeType=1, coords=None, poly_parts=None, path=None):
+
+    shpfile = shapefile.Writer(shapeType=shapeType)
+
+    if shapeType == 1:
+        for coord in coords:
+            if len(coord) == 2:
+                shpfile.point(coord[0], coord[1])
+            else:
+                shpfile.point(coord[0], coord[1], coord[2])
+    elif shapeType == 5:
+        shpfile.field('ID', 'C', '40')
+        for (id, part) in enumerate(poly_parts):
+            shpfile.poly(parts=part)
+            shpfile.record(str(id))
+
+    if path is not None:
+        shpfile.save(path)
+
+    return shpfile
 
 def shapes_in_polygons(shpfile_shapes, shpfile_polygons, zaxis=False):
 
@@ -125,19 +153,7 @@ def shapes_in_polygons(shpfile_shapes, shpfile_polygons, zaxis=False):
 #     pass
 
 
-def write_shpfile(coords, path=None):
 
-    shpfile = shapefile.Writer(shapefile.POINT)
-    for coord in coords:
-        if len(coord) == 2:
-            shpfile.point(coord[0], coord[1])
-        else:
-            shpfile.point(coord[0], coord[1], coord[2])
-
-    if path is not None:
-        shpfile.save(path)
-
-    return shpfile
 
 
 

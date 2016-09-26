@@ -47,12 +47,32 @@ def find_str(lst_str,string):
     else:
         print('input value is not a string')
 
-def find_closest(array,value):
+# def find_value():
+#     if array.ndim > 1:
+#         for row, i in enumerate(array):
+#             try:
+#                 col = i.index(value)
+#             except ValueError:
+#                 continue
+#             return row, col
+#         return -1
+#     else:
+#         raise ValueError("Array must be 2-dimensional")
+
+def find_closest(array, value, array2=None, value2=None, return_value=False):
     """ FIND INDEX IN LIST CLOSEST TO PREDEFINED VALUE """
 
     import numpy as np
-    idx = (np.abs(array-value)).argmin()
-    return idx#, array[idx]
+    if not array2 == None and value2:
+        id = (np.sqrt((array-value)**2 + (array2-value2)**2)).argmin()
+        if return_value:
+            return id, array[id]
+        return id
+    else:
+        id = (np.abs(array-value)).argmin()
+        if return_value:
+            return id, array[id]
+        return id
 
 def closestgridpnt(coords, xgrid, ygrid):
     """ FIND COORDINATE IN GRID CLOSEST TO PREDEFINED COORDINATES """

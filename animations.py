@@ -28,7 +28,7 @@ def __init__(self, filename=None):#
 #     self.y = 0
 #     self.z = 0)
 
-def play1D(t, x, y):
+def play1D(t, x, y, interval=100):
     fig, ax = plt.subplots()
     graph, = ax.plot(x, y[0])
 
@@ -40,13 +40,13 @@ def play1D(t, x, y):
         graph.set_data(x, y[i])
         return graph
 
-    anim = animation.FuncAnimation(fig, animate, frames=len(t), init_func=init, interval=100, blit=False)
+    anim = animation.FuncAnimation(fig, animate, frames=len(t), init_func=init, interval=interval, blit=False)
 
     plt.show()
 
     return anim
 
-def play1D_vars(vararray, t, x, y=None, colors=None):
+def play1D_vars(vararray, t, x, y=None, interval=100, colors=None):
     if y is not None:
         dist = [0]
         for i in range(0, len(x)-1):
@@ -68,14 +68,14 @@ def play1D_vars(vararray, t, x, y=None, colors=None):
             graph.set_data(x, vararray[gnum, i])
         return graphs
 
-    anim = animation.FuncAnimation(fig, animate, frames=len(t), init_func=init, interval=100, blit=False)
+    anim = animation.FuncAnimation(fig, animate, frames=len(t), init_func=init, interval=interval, blit=False)
 
     plt.show()
 
     return anim
 
 
-def play2D(x, y, z, cmin=None, cmax=None, save=False):
+def play2D(x, y, z, interval=100, cmin=None, cmax=None, save=False):
     fig = plt.figure()
     ax = plt.subplot()
     ax.set_aspect('equal')
@@ -101,7 +101,7 @@ def play2D(x, y, z, cmin=None, cmax=None, save=False):
         return pcol
 
     # call the animator.  blit=True means only re-draw the parts that have changed.
-    anim = animation.FuncAnimation(fig, animate, frames=z.shape[0], init_func=init, interval=1, blit=False)
+    anim = animation.FuncAnimation(fig, animate, frames=z.shape[0], init_func=init, interval=interval, blit=False)
 
     def nc_animation_save(path, filename, dpi):
         writer = animation.writers['ffmpeg'](fps=30)

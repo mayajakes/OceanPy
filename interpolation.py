@@ -2,6 +2,7 @@ __author__ = 'jaap.meijer'
 
 import numpy as np
 import pandas as pd
+from scipy.interpolate import interp1d
 
 def interpolate_1h(df, n):
 
@@ -25,3 +26,14 @@ def interpolate_1h(df, n):
             df[headers[1]][i + 2] = a2 * (df.index.hour[i + 2] - df.index.hour[i]) + df[headers[1]][i]
 
     return df
+
+def interp1d_nan(arr, kind='linear'):
+    '''
+    interpolate over nan values
+    '''
+    indices = np.arange(arr.shape[0])
+    finite = np.where(np.isfinite(arr))
+    f = interp1d(indices[finite], arr[finite], kind=kind, bounds_error=False)
+    arrout = np.where(np.isfinite(arr), arr, f(indices))
+
+    return arrout
