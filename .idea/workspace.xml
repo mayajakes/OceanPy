@@ -5,14 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c0d48281-ffc4-439d-a1e4-6cf56dfad94e" name="Default" comment=".">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/navier_stokes.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/polynomials.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/OceanPy.iml" afterPath="$PROJECT_DIR$/.idea/OceanPy.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/__init__.py" afterPath="$PROJECT_DIR$/__init__.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/animations.py" afterPath="$PROJECT_DIR$/animations.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/harmonic_analysis.py" afterPath="$PROJECT_DIR$/harmonic_analysis.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/polynomials.py" afterPath="$PROJECT_DIR$/polynomials.py" />
+    </list>
+    <list id="76a5a527-4fa6-43fb-a7d1-29214c5813ac" name="incomplete" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/navier_stokes.py" />
     </list>
     <ignored path="OceanPy.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -35,7 +32,7 @@
       <file leaf-file-name="harmonic_analysis.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/harmonic_analysis.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="885">
+            <state relative-caret-position="810">
               <caret line="59" column="25" selection-start-line="59" selection-start-column="25" selection-end-line="59" selection-end-column="25" />
               <folding>
                 <element signature="e#122#163#0" expanded="true" />
@@ -64,7 +61,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="animations.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="animations.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/animations.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="-452">
@@ -91,7 +88,7 @@
       <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
+            <state relative-caret-position="30">
               <caret line="15" column="33" selection-start-line="15" selection-start-column="33" selection-end-line="15" selection-end-column="33" />
               <folding>
                 <element signature="e#64#95#0" expanded="true" />
@@ -122,11 +119,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="polynomials.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="polynomials.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/polynomials.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="16" column="45" selection-start-line="16" selection-start-column="45" selection-end-line="16" selection-end-column="45" />
+            <state relative-caret-position="45">
+              <caret line="51" column="31" selection-start-line="51" selection-start-column="31" selection-end-line="51" selection-end-column="31" />
               <folding />
             </state>
           </provider>
@@ -174,9 +171,9 @@
         <option value="$PROJECT_DIR$/animations.py" />
         <option value="$PROJECT_DIR$/navier_stokes.py" />
         <option value="$PROJECT_DIR$/maps.py" />
-        <option value="$PROJECT_DIR$/polynomials.py" />
         <option value="$PROJECT_DIR$/__init__.py" />
         <option value="$PROJECT_DIR$/harmonic_analysis.py" />
+        <option value="$PROJECT_DIR$/polynomials.py" />
       </list>
     </option>
   </component>
@@ -209,6 +206,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -229,7 +227,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
       <pane id="Scratches" />
     </panes>
   </component>
@@ -400,17 +397,11 @@
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="c0d48281-ffc4-439d-a1e4-6cf56dfad94e" name="Default" comment="" />
+      <changelist id="76a5a527-4fa6-43fb-a7d1-29214c5813ac" name="incomplete" comment="" />
       <created>1458839732434</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1458839732434</updated>
-    </task>
-    <task id="LOCAL-00067" summary=".">
-      <created>1465831421517</created>
-      <option name="number" value="00067" />
-      <option name="presentableId" value="LOCAL-00067" />
-      <option name="project" value="LOCAL" />
-      <updated>1465831421517</updated>
     </task>
     <task id="LOCAL-00068" summary=".">
       <created>1465831653591</created>
@@ -748,11 +739,18 @@
       <option name="project" value="LOCAL" />
       <updated>1474895155504</updated>
     </task>
-    <option name="localTasksCounter" value="116" />
+    <task id="LOCAL-00116" summary="Add functions for fitting polynomials, in polynomials.py.">
+      <created>1502332051033</created>
+      <option name="number" value="00116" />
+      <option name="presentableId" value="LOCAL-00116" />
+      <option name="project" value="LOCAL" />
+      <updated>1502332051034</updated>
+    </task>
+    <option name="localTasksCounter" value="117" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1440" height="900" extended-state="0" />
+    <frame x="0" y="0" width="1440" height="900" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20577872" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -804,7 +802,9 @@
     <MESSAGE value="Name change." />
     <MESSAGE value="Added function for 1D animation, including multiple variables all at once." />
     <MESSAGE value="." />
-    <option name="LAST_COMMIT_MESSAGE" value="." />
+    <MESSAGE value="Add functions for fitting polynomials, in polynomials.py." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add functions for fitting polynomials, in polynomials.py." />
+    <option name="PRESELECT_EXISTING_CHANGELIST" value="false" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1134,14 +1134,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/polynomials.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="16" column="45" selection-start-line="16" selection-start-column="45" selection-end-line="16" selection-end-column="45" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/navier_stokes.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1980">
@@ -1154,7 +1146,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
+        <state relative-caret-position="30">
           <caret line="15" column="33" selection-start-line="15" selection-start-column="33" selection-end-line="15" selection-end-column="33" />
           <folding>
             <element signature="e#64#95#0" expanded="true" />
@@ -1164,7 +1156,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/harmonic_analysis.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="885">
+        <state relative-caret-position="810">
           <caret line="59" column="25" selection-start-line="59" selection-start-column="25" selection-end-line="59" selection-end-column="25" />
           <folding>
             <element signature="e#122#163#0" expanded="true" />
@@ -1179,6 +1171,14 @@
           <folding>
             <element signature="e#151#160#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/polynomials.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="51" column="31" selection-start-line="51" selection-start-column="31" selection-end-line="51" selection-end-column="31" />
+          <folding />
         </state>
       </provider>
     </entry>

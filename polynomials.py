@@ -2,7 +2,7 @@
 
 import numpy as np
 
-def polyfit_1d(x, y, order=2, grid=True):
+def polyfit_1d(x, y, order=1, grid=True):
     '''
     Uses x, y data and fits polynomial using the least-squares method for given order.
     Solves the polynomial of the form:
@@ -49,7 +49,7 @@ def polyfit_1d(x, y, order=2, grid=True):
     return xm, ym
 
 
-def polyfit_2d(x, y, z, order=2, gridsize=(50, 100)):
+def polyfit_2d(x, y, z, order=1, gridsize=(50, 100)):
     '''
     Uses x, y and z data and fits polynomial using the least-squares method for given order.
     Solves the polynomial of the form:
