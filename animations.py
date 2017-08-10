@@ -14,6 +14,8 @@ from matplotlib import animation
 from netCDF4 import Dataset
 from OceanPy.colormaps import *
 from OpenEarthTools.plot.colormap_vaklodingen import *
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
 
 # class ncAnimation:
 #     filename = ''
@@ -113,6 +115,25 @@ def play2D(x, y, z, interval=100, cmin=None, cmax=None, save=False):
         if not os.path.exists(path):
             os.makedirs(path)
         nc_animation_save(path, filename, dpi=300)
+
+    plt.show()
+
+    return anim
+
+
+def play3D(x, y, z, interval=100, cmap=cm.jet, cmin=None, cmax=None, save=False):
+
+    fig = plt.figure()
+    ax = fig.gca(projection='3d')
+
+    surf = ax.plot_surface(x, y, z[0], cmap=cmap, rstride=1, cstride=1)
+
+    def animate(i):
+        ax.clear()
+        surf = ax.plot_surface(x, y, z[i], cmap=cmap, rstride=1, cstride=1)
+        return surf,
+
+    anim = animation.FuncAnimation(fig, animate, frames=z.shape[0], blit=False)
 
     plt.show()
 
