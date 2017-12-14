@@ -13,7 +13,7 @@ from matplotlib import animation
 # from pylab import *
 from netCDF4 import Dataset
 from OceanPy.colormaps import *
-from OpenEarthTools.plot.colormap_vaklodingen import *
+# from OpenEarthTools.plot.colormap_vaklodingen import *
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 
