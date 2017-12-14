@@ -1,5 +1,7 @@
 __author__ = 'jaap.meijer'
 
+import numpy as np
+
 def find(lstlon, lstlat, llcrnrlon, llcrnrlat, urcrnrlon, urcrnrlat):
     result = []
     for index, (i,j) in enumerate(zip(lstlon,lstlat)):
@@ -40,7 +42,7 @@ def find_str(lst_str,string):
     import pandas as pd
     if type(string) == str:
         result = []
-        for index, i in enumerate(lst):
+        for index, i in enumerate(lst_str):
             if i == string:
                 result.append(index)
                 return result
@@ -95,3 +97,17 @@ def closestgridpnt(coords, xgrid, ygrid):
 #         if i >= lat1 and i < lat2:
 #             result.append(index)
 #     return result
+
+def find_in_circle(x, y, center, radius):
+    '''
+    Find x,y-coordinates that are within a circle distance (radius) from a center coordinate.
+    :param x:
+    :param y:
+    :param center:
+    :param radius:
+    :return: indices of points in circle
+    '''
+
+    x0, y0 = center
+    idx = np.where((x - x0) ** 2 + (y - y0) ** 2 <= radius ** 2)[0]
+    return idx

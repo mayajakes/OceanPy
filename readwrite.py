@@ -134,8 +134,6 @@ def read_ascii(filename, nodata='-9999'):
     return array, header
 
 
-
-
 def readxls(filename, colnos, rowstart = 0, sheetno = 0):
     import xlrd
 
@@ -149,3 +147,14 @@ def readxls(filename, colnos, rowstart = 0, sheetno = 0):
         x.append(sheet.cell_value(row,colnos[0]))
         y.append(sheet.cell_value(row,colnos[1]))
     return x, y
+
+import pickle
+
+def write_dict(dictionary, path, filename, protocol=pickle.HIGHEST_PROTOCOL):
+    with open(os.path.join(path, filename + '.pkl'), 'wb') as f:
+        pickle.dump(dictionary, f, protocol=protocol)
+
+
+def read_dict(path, filename, encoding='ascii'):
+    with open(os.path.join(path, filename), 'rb') as f:
+        return pickle.load(f, encoding=encoding)

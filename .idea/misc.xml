@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+<<<<<<< HEAD
   <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.5.2 (~/miniconda3/envs/oceanv3/bin/python)" project-jdk-type="Python SDK" />
+=======
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.5.4 (~/miniconda3/envs/ocean3/bin/python)" project-jdk-type="Python SDK" />
+>>>>>>> 12f7036cfb1339f737c22ecaab76d144b12cbbac
 </project>

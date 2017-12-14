@@ -100,3 +100,54 @@ def polyfit_2d(x, y, z, order=1, gridsize=(50, 100)):
 
 
     return xm, ym, zm
+
+
+def polyfit2d(x, y, z, order=2, gridsize=(50, 100)):
+    ''' built in residuals and RMSE '''
+
+    if gridsize is False:
+        xm, ym, zm = x.copy(), y.copy(), np.zeros(z.shape)
+    else:
+        xg, yg = np.meshgrid(np.linspace(x.min(), x.max(), gridsize[0]),
+                             np.linspace(y.min(), y.max(), gridsize[1]))
+        xm, ym = xg.flatten(), yg.flatten()
+        zm = np.zeros(xm.shape)
+
+    nterms = int((order ** 2 + 3 * order + 2) / 2)
+
+    P = np.zeros((x.size, nterms))
+
+    pascal_triangle = [(i, j) for i in range(order + 1) for j in range(order + 1) if i + j <= order]
+
+    for k, (i, j) in enumerate(pascal_triangle):
+        P[:, k] = x ** i * y ** j
+    A = np.linalg.lstsq(P, z)[0]
+
+    for alpha, (i, j) in zip(A, pascal_triangle):
+        zm += alpha * xm ** i * ym ** j
+
+    # residuals = zm - z
+    # rmse = np.sqrt(((zm - z) ** 2).mean())
+
+    if gridsize is not False:
+        xm, ym, zm = xg, yg, zm.reshape(xg.shape)
+
+    return xm, ym, zm#, rmse
+
+
+# http://www.ce.udel.edu/faculty/kaliakin/appendix_poly.pdf
+
+# def test(order=3):
+#     "Stupid test function"
+#     # ij = []
+#     # for i in range(0, order + 1):
+#     #     for j in range(0, order + 1):
+#     #         if i + j <= order:
+#     #             ij.append((i, j))
+#     ij = [(i, j) for i in range(order+1) for j in range(order+1) if i + j <= order]
+#
+#
+# if __name__=='__main__':
+#     from timeit import Timer
+#     t = Timer("test()", "from __main__ import test")
+#     print(t.timeit())
