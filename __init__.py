@@ -14,3 +14,4 @@ from OceanPy.shapefiles import *
 from OceanPy.remote import *
 from OceanPy.grid import *
 from OceanPy.polynomials import *
+from OceanPy.netcdf import *

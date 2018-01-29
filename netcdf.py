@@ -1,3 +1,7 @@
+from netCDF4 import Dataset, date2num
+import xml.etree.ElementTree as ElementTree
+from urllib.request import urlopen
+
 
 class createNetCDF(object):
 
@@ -23,10 +27,8 @@ class createNetCDF(object):
 
     def create_vars(self, vars):
 
-        import xml.etree.ElementTree as ET
-        from urllib.request import urlopen
         # open cf conventions standard names xml file
-        root = ET.parse(
+        root = ElementTree.parse(
             urlopen('http://cfconventions.org/Data/cf-standard-names/current/src/cf-standard-name-table.xml'))
 
         # check if var_name is in standard names xml file and if so save in dict with according unit and description
@@ -43,7 +45,12 @@ class createNetCDF(object):
             # add variable attributes
             if varname.split()[-1] in standard_names.keys():
                 var.standard_name = varname.split()[-1]
-                var.units = standard_names[varname.split()[-1]][0]
+                if varname.split()[-1] == 'time':
+                    calendar = 'standard'
+                    var.units = 'seconds since 1970-01-01 00:00'
+                    data = date2num(data, units=var.units, calendar=calendar)
+                else:
+                    var.units = standard_names[varname.split()[-1]][0]
             var.long_name = varname
             # var.description = standard_names[varname.split()[-1]][1]
 
