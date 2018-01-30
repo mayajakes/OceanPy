@@ -37,21 +37,21 @@ class createNetCDF(object):
             standard_names[child.get('id')] = (child.findtext('canonical_units'), child.findtext('description'))
 
         for varname, values in vars.items():
-            datatype, dimensions, data = values
+            standard_name, datatype, dimensions, data = values
 
             # create variables
             var = self.dataset.createVariable(varname, datatype, dimensions)
 
             # add variable attributes
-            if varname.split()[-1] in standard_names.keys():
-                var.standard_name = varname.split()[-1]
-                if varname.split()[-1] == 'time':
+            if standard_name.split()[-1] in standard_names.keys():
+                var.standard_name = standard_name.split()[-1]
+                if standard_name.split()[-1] == 'time':
                     calendar = 'standard'
                     var.units = 'seconds since 1970-01-01 00:00'
                     data = date2num(data, units=var.units, calendar=calendar)
                 else:
-                    var.units = standard_names[varname.split()[-1]][0]
-            var.long_name = varname
+                    var.units = standard_names[standard_name.split()[-1]][0]
+            var.long_name = standard_name
             # var.description = standard_names[varname.split()[-1]][1]
 
             # add data to variables
