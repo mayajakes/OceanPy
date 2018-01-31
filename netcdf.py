@@ -1,3 +1,4 @@
+import os
 from netCDF4 import Dataset, date2num
 import xml.etree.ElementTree as ElementTree
 from urllib.request import urlopen
@@ -7,20 +8,23 @@ class createNetCDF(object):
 
     def __init__(self, output_file):
         self.output_file = output_file
-        self.dataset = Dataset(output_file, 'w')
-
-        # Add global attributes
-        self.dataset.Conventions = 'CF-1.6'
-        self.dataset.Metadata_Conventions = 'Unidata Dataset Discovery v1.0'
+        if os.path.isfile(output_file):
+            self.dataset = Dataset(output_file, 'r+')
+        else:
+            self.dataset = Dataset(output_file, 'w')
 
     def add_dims(self, dims):
         ''' Create dimensions of variables to store in NetCDF '''
         for dimname, size in dims.items():
             self.dataset.createDimension(dimname=dimname, size=size)
 
-
     def add_glob_attr(self, glob_attr):
         ''' Add global attributes '''
+
+        attr = {'Conventions': 'CF-1.6', 'Metadata_Conventions': 'Unidata Dataset Discovery v1.0'}
+        for key in attr.keys():
+            if not hasattr(self.dataset, 'Conventions') and key not in glob_attr.keys():
+                setattr(self.dataset, key, attr[key])
 
         for key in glob_attr.keys():
             setattr(self.dataset, key, glob_attr[key])
