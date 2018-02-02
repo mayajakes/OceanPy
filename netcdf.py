@@ -1,8 +1,10 @@
 import os
 from netCDF4 import Dataset, date2num
 import xml.etree.ElementTree as ElementTree
-from urllib.request import urlopen
-
+try:
+    from urllib.request import urlopen
+except ImportError:
+    from urllib import urlopen
 
 class createNetCDF(object):
 
