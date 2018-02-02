@@ -1,17 +1,17 @@
 #__all__ = ['folder1', 'folder2'] # for folders within OceanPy
 
-from OceanPy.colormaps import *
-from OceanPy.extreme_value_analysis import *
-from OceanPy.find import *
-from OceanPy.interpolation import *
-from OceanPy.maps import *
-from OceanPy.meteorology import *
-from OceanPy.animations import *
-from OceanPy.plot import *
-from OceanPy.projections import *
-from OceanPy.readwrite import *
-from OceanPy.shapefiles import *
-from OceanPy.remote import *
-from OceanPy.grid import *
-from OceanPy.polynomials import *
+# from . import colormaps
+# from . import extreme_value_analysis
+# from . import find
+# from . import interpolation
+# from . import maps
+# from . import meteorology
+# from . import animations
+# from . import plot
+# from . import projections
+# from . import readwrite
+# from . import shapefiles
+# from . import remote
+# from . import grid
+# from . import polynomials
 from OceanPy.netcdf import *
