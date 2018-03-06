@@ -106,6 +106,7 @@ def rotatexyz(x0, y0, z0, lstx, lsty, lstz, theta, dn=None):
         zprime.append(float(xyzprimetrans[2]))
 
     return xprime, yprime, zprime
+
 def rotatexyz_pnt(x0, y0, z0, x, y, z, theta):
 
     import numpy as np
@@ -144,6 +145,7 @@ def rotatexyz_pnt(x0, y0, z0, x, y, z, theta):
     zprime = float(xyzprimetrans[2])
 
     return (xprime, yprime, zprime)
+
 def rotatexy(x0, y0, lstx, lsty, theta, dn=None):
 
     import numpy as np
@@ -181,6 +183,7 @@ def rotatexy(x0, y0, lstx, lsty, theta, dn=None):
         coords.append((float(xyprimetrans[0]),float(xyprimetrans[1])))
     # return xprime, yprime
     return coords
+
 def rotatexy_pnt(x0, y0, x, y, theta):
 
     import numpy as np
@@ -242,6 +245,7 @@ def geodetic2ecef(lon, lat, h, radian=False):
     return ((N + h) * np.cos(lamb) * np.cos(phi),
             (N + h) * np.sin(lamb) * np.cos(phi),
             (N * (1 - e**2) + h) * np.sin(phi))
+
 def ecef2enu(x, y, z, lon0=0., lat0=0., h0=0., radian=False):
     '''
     http://www.navipedia.net/index.php/Transformations_between_ECEF_and_ENU_coordinates
@@ -276,6 +280,7 @@ def ecef2enu(x, y, z, lon0=0., lat0=0., h0=0., radian=False):
     enu = np.dot(R, np.array([x - x0, y - y0, z - z0]))
 
     return tuple(enu)
+
 def llh2enu(lon, lat, h, lon0=0., lat0=0., h0=0., radian=False):
     return ecef2enu(*geodetic2ecef(lon, lat, h, radian=radian), lon0=lon0, lat0=lat0, h0=h0)
 
@@ -327,6 +332,7 @@ def haversine(lon, lat, h=0.):
     bearing = (np.rad2deg(bearing) + 360) % 360
 
     return distance, bearing
+
 def vincenty(lon, lat, ellps='WGS-84', iterlim=20):
     '''
     Geodesic distance between longitude and latitude coordinates
