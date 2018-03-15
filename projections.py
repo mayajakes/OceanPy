@@ -1,5 +1,3 @@
-__author__ = 'janjaapmeijer'
-
 # https://pypi.python.org/pypi/utm
 
 import pyproj

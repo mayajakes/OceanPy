@@ -1,5 +1,3 @@
-__author__ = 'jaap.meijer'
-
 from pylab import *
 
 # http://stackoverflow.com/questions/24535848/drawing-log-linear-plot-on-a-square-plot-area-in-matplotlib

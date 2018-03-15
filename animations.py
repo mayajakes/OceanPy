@@ -4,8 +4,6 @@
 nc_animation makes an animation of a NetCDF file
 '''
 
-__author__ = 'Jan Jaap Meijer'
-__email__ = 'janjaapmeijer@gmail.com'
 
 import os
 

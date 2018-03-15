@@ -1,5 +1,3 @@
-__author__ = 'jaap.meijer'
-
 # http://mathworld.wolfram.com/GumbelDistribution.html
 # https://en.wikipedia.org/wiki/Gumbel_distribution
 # http://stackoverflow.com/questions/23217484/how-to-find-parameters-of-gumbels-distribution-using-scipy-optimize
