@@ -1,5 +1,3 @@
-__author__ = 'jaap.meijer'
-
 import numpy as np
 import pandas as pd
 from scipy.interpolate import interp1d
@@ -205,12 +203,7 @@ def OI(x, y, obs_fld, L, xx=None, yy=None, bg_fld=None, gridsize=None):
     R = np.identity(P)
     R = varian_r * R
 
-    # OBSERVATION FIELD VECTOR
-    y_o = np.matrix(obs_fld).T
-
     # FORWARD OPERATOR OR OBSERVATION OPERATOR MATRIX
-    x_b = np.reshape(bg_fld, (N, 1))
-
     def Hmatrix():
 
         H = np.matrix(np.zeros((P, N)))
@@ -238,8 +231,15 @@ def OI(x, y, obs_fld, L, xx=None, yy=None, bg_fld=None, gridsize=None):
 
     H = Hmatrix()
 
-    # BACKGROUND FIELD VECTOR
+
+    # BACKGROUND FIELD VECTOR AT GRID POINTS
+    x_b = np.reshape(bg_fld, (N, 1))
+
+    # BACKGROUND FIELD VECTOR AT OBSERVATION POINTS
     y_b = H * x_b
+
+    # OBSERVATION FIELD VECTOR AT OBSERVATION POINTS
+    y_o = np.matrix(obs_fld).T
 
     # INNOVATION OR OBSERVATIONAL INCREMENTS VECTOR
     d = y_o - y_b
