@@ -1,6 +1,8 @@
 import os
 from netCDF4 import Dataset, date2num
 import xml.etree.ElementTree as ElementTree
+import OceanPy
+from datetime import datetime
 try:
     from urllib.request import urlopen
 except ImportError:
@@ -22,8 +24,11 @@ class createNetCDF(object):
 
     def add_glob_attr(self, glob_attr):
         ''' Add global attributes '''
-
-        attr = {'Conventions': 'CF-1.6', 'Metadata_Conventions': 'Unidata Dataset Discovery v1.0'}
+        time_now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        attr = {'Conventions': 'CF-1.6',
+                'Metadata_Conventions': 'Unidata Dataset Discovery v1.0',
+                'history': 'Created on %s with %s' % (time_now, os.path.basename(__file__))
+                }
         for key in attr.keys():
             if not hasattr(self.dataset, 'Conventions') and key not in glob_attr.keys():
                 setattr(self.dataset, key, attr[key])
