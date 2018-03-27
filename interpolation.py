@@ -173,7 +173,7 @@ def OI(x, y, obs_fld, Lx, Ly=False, xx=None, yy=None, bg_fld=None, gridsize=None
     # r_ij is the distance between i and j
     # L length scale, in the ocean mesoscale processes have a length scale on the order of the radius of deformation
 
-    def Bmatrix(varian_b, Lx, Ly=False):
+    def Bmatrix(varian_b, Lx, Ly=Ly):
 
         B = np.matrix(np.ones((N, N)))
         for m in range(1, N):
@@ -202,7 +202,7 @@ def OI(x, y, obs_fld, Lx, Ly=False, xx=None, yy=None, bg_fld=None, gridsize=None
         return B
 
     varian_b = np.var(bg_fld)
-    B = Bmatrix(Lx, Ly, varian_b)
+    B = Bmatrix(varian_b, Lx, Ly)
 
     # OBSERVATION ERROR COVARIANCE MATRIX
     varian_r = np.var(obs_fld)
@@ -231,10 +231,10 @@ def OI(x, y, obs_fld, Lx, Ly=False, xx=None, yy=None, bg_fld=None, gridsize=None
                 wy = yo - j
 
                 # fill matrix with weighting factors
-                H[k, j * nx + i] = wx * (1 - wy)
-                H[k, j * nx + i + 1] = (1 - wx) * (1 - wy)
-                H[k, j * nx + nx + i] = wx * wy
-                H[k, j * nx + nx + i + 1] = (1 - wx) * wy
+                H[k, j * nx + i] = (1 - wx) * (1 - wy)
+                H[k, j * nx + i + 1] = wx * (1 - wy)
+                H[k, j * nx + nx + i] = (1 - wx) * wy
+                H[k, j * nx + nx + i + 1] = wx * wy
 
                 # print('Check sum: %s' % (wx * (1 - wy) + (1 - wx) * (1 - wy) + wx * wy + (1 - wx) * wy))
 
