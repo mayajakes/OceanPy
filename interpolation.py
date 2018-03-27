@@ -113,7 +113,7 @@ def polyfit2d(x, y, z, order=1):
 
     return get_zz#, rmse
 
-def OI(x, y, obs_fld, L, xx=None, yy=None, bg_fld=None, gridsize=None):
+def OI(x, y, obs_fld, Lx, Ly=False, xx=None, yy=None, bg_fld=None, gridsize=None):
     '''
     Optimal Interpolation scheme based on Kalnay, 2003
     Multivariate analysis: http://www.atmosp.physics.utoronto.ca/PHY2509/ch3.pdf
@@ -173,7 +173,7 @@ def OI(x, y, obs_fld, L, xx=None, yy=None, bg_fld=None, gridsize=None):
     # r_ij is the distance between i and j
     # L length scale, in the ocean mesoscale processes have a length scale on the order of the radius of deformation
 
-    def Bmatrix(L, varian_b):
+    def Bmatrix(varian_b, Lx, Ly=False):
 
         B = np.matrix(np.ones((N, N)))
         for m in range(1, N):
@@ -191,7 +191,7 @@ def OI(x, y, obs_fld, L, xx=None, yy=None, bg_fld=None, gridsize=None):
                 yl = yc + (lj - int(ny / 2)) * dy
 
                 dist2 = (xm - xl) ** 2 + (ym - yl) ** 2
-                cov = np.exp(-dist2 / (2 * L ** 2))
+                cov = np.exp(-dist2 / (2 * Lx ** 2)) if Ly is False else np.exp(-dist2 / (Lx**2 + Ly**2))
                 B[m, l] = cov
                 B[l, m] = cov
 
@@ -202,7 +202,7 @@ def OI(x, y, obs_fld, L, xx=None, yy=None, bg_fld=None, gridsize=None):
         return B
 
     varian_b = np.var(bg_fld)
-    B = Bmatrix(L, varian_b)
+    B = Bmatrix(Lx, Ly, varian_b)
 
     # OBSERVATION ERROR COVARIANCE MATRIX
     varian_r = np.var(obs_fld)
@@ -214,18 +214,23 @@ def OI(x, y, obs_fld, L, xx=None, yy=None, bg_fld=None, gridsize=None):
 
         H = np.matrix(np.zeros((P, N)))
         for k in range(P):
-            xo = int(nx / 2) + (x[k] - xc) / dx
-            yo = int(ny / 2) + (y[k] - yc) / dy
 
+            # llcrnr of grid cell
+            xo = int(nx / 2) - np.ceil(xc / dx) + x[k] / dx
+            yo = int(ny / 2) - np.ceil(yc / dy) + y[k] / dy
+
+            # index of llcrnr of grid cell
             i, j = int(xo), int(yo)
 
             if 0 <= i <= nx - 1 and 0 <= j <= ny - 1:
-                i = i - 1 if i == nx - 1 else i
-                j = j - 1 if j == ny - 1 else j
+                # i = i - 1 if i == nx - 1 else i
+                # j = j - 1 if j == ny - 1 else j
 
+                # normalized weighting factor in x, y direction
                 wx = xo - i
                 wy = yo - j
 
+                # fill matrix with weighting factors
                 H[k, j * nx + i] = wx * (1 - wy)
                 H[k, j * nx + i + 1] = (1 - wx) * (1 - wy)
                 H[k, j * nx + nx + i] = wx * wy
@@ -248,7 +253,7 @@ def OI(x, y, obs_fld, L, xx=None, yy=None, bg_fld=None, gridsize=None):
     y_b = H * x_b
 
     # if convert:
-
+        
 
     # OBSERVATION FIELD VECTOR AT OBSERVATION POINTS
     y_o = np.matrix(obs_fld).T
