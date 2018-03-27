@@ -37,7 +37,7 @@ def interp1d_nan(arr, kind='linear'):
     return arrout
 
 
-def polyfit1d(x, y, order=1, grid=True):
+def polyfit1d(x, y, order=1):
     '''
     Uses x, y data and fits polynomial using the least-squares method for given order.
     Solves the polynomial of the form:
@@ -46,10 +46,8 @@ def polyfit1d(x, y, order=1, grid=True):
     y = ax^3 + bx^2 + cx + d                (order = 3 or 'cubic'
     '''
 
-    if grid:
-        xm, ym = np.linspace(x.min(), x.max(), len(y)), np.zeros(len(y))
-    else:
-        xm, ym = x.copy(), np.zeros(len(y))
+    if any(type(l) is list for l in (x, y)):
+        x, y = np.array(x), np.array(y)
 
     nterms = int(order + 1)
 
@@ -59,10 +57,16 @@ def polyfit1d(x, y, order=1, grid=True):
         P[:, k] = x ** i
 
     A = np.linalg.lstsq(P, y)[0]
-    for alpha, i in zip(A, pascal_triangle):
-        ym += alpha * xm ** i
+    def get_yy(xx):
+        yy = np.zeros(xx.shape)
+        for alpha, i in zip(A, pascal_triangle):
+            yy += alpha * xx ** i
+        return yy
 
-    return xm, ym
+    # for alpha, i in zip(A, pascal_triangle):
+    #     ym += alpha * xm ** i
+
+    return get_yy
 
 
 def polyfit2d(x, y, z, order=1):
@@ -112,6 +116,8 @@ def polyfit2d(x, y, z, order=1):
 def OI(x, y, obs_fld, L, xx=None, yy=None, bg_fld=None, gridsize=None):
     '''
     Optimal Interpolation scheme based on Kalnay, 2003
+    Multivariate analysis: http://www.atmosp.physics.utoronto.ca/PHY2509/ch3.pdf
+    http://modb.oce.ulg.ac.be/wiki/upload/diva_intro.pdf
     :param x:
     :param y:
     :param obs_fld:
@@ -123,9 +129,9 @@ def OI(x, y, obs_fld, L, xx=None, yy=None, bg_fld=None, gridsize=None):
     :return:
     '''
 
+    # checks if background field is provided
     lst = [True if x != None else False for x in [xx, yy, bg_fld]]
     if all(lst):
-
         nx, ny = bg_fld.shape
         if xx.ndim == 1 and yy.ndim == 1:
             xi, yi = xx.copy(), yy.copy()
@@ -137,10 +143,10 @@ def OI(x, y, obs_fld, L, xx=None, yy=None, bg_fld=None, gridsize=None):
         else:
             raise InputError('Optimal interpolation works only for 1 or 2-dimensional arrays')
 
-        Lx, Ly = abs(xi[-1] - xi[0]), abs(yi[-1] - yi[0])
-        dx, dy = Lx / (nx - 1), Ly / (ny - 1)
+        # Lx, Ly = abs(xi[-1] - xi[0]), abs(yi[-1] - yi[0])
+        dx, dy = abs(xi[-1] - xi[0]) / (nx - 1), abs(yi[-1] - yi[0]) / (ny - 1)
         xc, yc = xi[0] + (nx - 1) * dx / 2, yi[0] + (ny - 1) * dy / 2
-
+    # creates background field by interpolating a linear plane through the observations
     elif not all(lst):
 
         if gridsize is None:
@@ -148,7 +154,7 @@ def OI(x, y, obs_fld, L, xx=None, yy=None, bg_fld=None, gridsize=None):
         nx, ny = gridsize
         xi, dx = np.linspace(min(x), max(x), nx, retstep=True)
         yi, dy = np.linspace(min(y), max(y), ny, retstep=True)
-        Lx, Ly = abs(max(x) - min(x)), abs(max(y) - min(y))
+        # Lx, Ly = abs(max(x) - min(x)), abs(max(y) - min(y))
         xx, yy = np.meshgrid(xi, yi)
         xc, yc = xi[0] + (nx - 1) * dx / 2, yi[0] + (ny - 1) * dy / 2
 
@@ -225,8 +231,11 @@ def OI(x, y, obs_fld, L, xx=None, yy=None, bg_fld=None, gridsize=None):
                 H[k, j * nx + nx + i] = wx * wy
                 H[k, j * nx + nx + i + 1] = (1 - wx) * wy
 
+                # print('Check sum: %s' % (wx * (1 - wy) + (1 - wx) * (1 - wy) + wx * wy + (1 - wx) * wy))
+
+
             else:
-                raise ValueError('Observation point (%s, %s) is not within grid domain.' % (lon[k], lat[k]))
+                raise ValueError('Observation point (%s, %s) is not within grid domain.' % (x[k], y[k]))
         return H
 
     H = Hmatrix()
@@ -237,6 +246,9 @@ def OI(x, y, obs_fld, L, xx=None, yy=None, bg_fld=None, gridsize=None):
 
     # BACKGROUND FIELD VECTOR AT OBSERVATION POINTS
     y_b = H * x_b
+
+    # if convert:
+
 
     # OBSERVATION FIELD VECTOR AT OBSERVATION POINTS
     y_o = np.matrix(obs_fld).T
