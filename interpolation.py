@@ -132,7 +132,7 @@ def OI(x, y, obs_fld, Lx, Ly=False, xx=None, yy=None, bg_fld=None, gridsize=None
     # checks if background field is provided
     lst = [True if x != None else False for x in [xx, yy, bg_fld]]
     if all(lst):
-        nx, ny = bg_fld.shape
+        ny, nx = bg_fld.shape
         if xx.ndim == 1 and yy.ndim == 1:
             xi, yi = xx.copy(), yy.copy()
             xx, yy = np.meshgrid(xi, yi)
@@ -151,7 +151,7 @@ def OI(x, y, obs_fld, Lx, Ly=False, xx=None, yy=None, bg_fld=None, gridsize=None
 
         if gridsize is None:
             gridsize = (20, 20)
-        nx, ny = gridsize
+        ny, nx = gridsize
         xi, dx = np.linspace(min(x), max(x), nx, retstep=True)
         yi, dy = np.linspace(min(y), max(y), ny, retstep=True)
         # Lx, Ly = abs(max(x) - min(x)), abs(max(y) - min(y))
@@ -175,7 +175,7 @@ def OI(x, y, obs_fld, Lx, Ly=False, xx=None, yy=None, bg_fld=None, gridsize=None
 
     def Bmatrix(varian_b, Lx, Ly=Ly):
 
-        B = np.matrix(np.ones((N, N)))
+        B = np.matlib.ones((N, N))
         for m in range(1, N):
             mj = int(m / nx)
             mi = m - mj * nx
@@ -212,7 +212,7 @@ def OI(x, y, obs_fld, Lx, Ly=False, xx=None, yy=None, bg_fld=None, gridsize=None
     # FORWARD OPERATOR OR OBSERVATION OPERATOR MATRIX
     def Hmatrix():
 
-        H = np.matrix(np.zeros((P, N)))
+        H = np.matlib.zeros((P, N))
         for k in range(P):
 
             # llcrnr of grid cell
@@ -223,12 +223,13 @@ def OI(x, y, obs_fld, Lx, Ly=False, xx=None, yy=None, bg_fld=None, gridsize=None
             i, j = int(xo), int(yo)
 
             if 0 <= i <= nx - 1 and 0 <= j <= ny - 1:
-                # i = i - 1 if i == nx - 1 else i
-                # j = j - 1 if j == ny - 1 else j
 
                 # normalized weighting factor in x, y direction
                 wx = xo - i
                 wy = yo - j
+
+                i = i - 1 if i == nx - 1 else i
+                j = j - 1 if j == ny - 1 else j
 
                 # fill matrix with weighting factors
                 H[k, j * nx + i] = (1 - wx) * (1 - wy)
@@ -268,7 +269,7 @@ def OI(x, y, obs_fld, Lx, Ly=False, xx=None, yy=None, bg_fld=None, gridsize=None
     x_a = x_b + W * d
 
     # reshape analysis filed vector into grid array and make matrix an array
-    ana_fld = np.asarray(np.reshape(x_a, (nx, ny)))
+    ana_fld = np.asarray(np.reshape(x_a, (ny, nx)))
 
     # ANALYSIS ERROR COVARIANCE MATRIX
     I = np.identity(N)
