@@ -113,7 +113,7 @@ def polyfit2d(x, y, z, order=1):
 
     return get_zz#, rmse
 
-def OI(x, y, obs_fld, Lx, Ly=False, xx=None, yy=None, bg_fld=None, gridsize=None):
+def OI(x, y, obs_fld, Lx, Ly=None, xx=None, yy=None, bg_fld=None, order=1, gridsize=(20, 20)):
     '''
     Optimal Interpolation scheme based on Kalnay, 2003
     Multivariate analysis: http://www.atmosp.physics.utoronto.ca/PHY2509/ch3.pdf
@@ -130,8 +130,9 @@ def OI(x, y, obs_fld, Lx, Ly=False, xx=None, yy=None, bg_fld=None, gridsize=None
     '''
 
     # checks if background field is provided
-    lst = [True if x != None else False for x in [xx, yy, bg_fld]]
-    if all(lst):
+    lst = [xx, yy, bg_fld]
+    if all(v is not None for v in lst):
+
         ny, nx = bg_fld.shape
         if xx.ndim == 1 and yy.ndim == 1:
             xi, yi = xx.copy(), yy.copy()
@@ -146,11 +147,10 @@ def OI(x, y, obs_fld, Lx, Ly=False, xx=None, yy=None, bg_fld=None, gridsize=None
         # Lx, Ly = abs(xi[-1] - xi[0]), abs(yi[-1] - yi[0])
         dx, dy = abs(xi[-1] - xi[0]) / (nx - 1), abs(yi[-1] - yi[0]) / (ny - 1)
         xc, yc = xi[0] + (nx - 1) * dx / 2, yi[0] + (ny - 1) * dy / 2
-    # creates background field by interpolating a linear plane through the observations
-    elif not all(lst):
 
-        if gridsize is None:
-            gridsize = (20, 20)
+    # creates background field by interpolating polynomial through the observations
+    elif all(v is None for v in lst):
+
         ny, nx = gridsize
         xi, dx = np.linspace(min(x), max(x), nx, retstep=True)
         yi, dy = np.linspace(min(y), max(y), ny, retstep=True)
@@ -158,7 +158,7 @@ def OI(x, y, obs_fld, Lx, Ly=False, xx=None, yy=None, bg_fld=None, gridsize=None
         xx, yy = np.meshgrid(xi, yi)
         xc, yc = xi[0] + (nx - 1) * dx / 2, yi[0] + (ny - 1) * dy / 2
 
-        f = polyfit2d(x, y, obs_fld, order=1)
+        f = polyfit2d(x, y, obs_fld, order=order)
         bg_fld = f(xx, yy)
 
     else:
@@ -191,7 +191,7 @@ def OI(x, y, obs_fld, Lx, Ly=False, xx=None, yy=None, bg_fld=None, gridsize=None
                 yl = yc + (lj - int(ny / 2)) * dy
 
                 dist2 = (xm - xl) ** 2 + (ym - yl) ** 2
-                cov = np.exp(-dist2 / (2 * Lx ** 2)) if Ly is False else np.exp(-dist2 / (Lx**2 + Ly**2))
+                cov = np.exp(-dist2 / (2 * Lx ** 2)) if Ly is None else np.exp(-dist2 / (Lx**2 + Ly**2))
                 B[m, l] = cov
                 B[l, m] = cov
 
@@ -237,7 +237,7 @@ def OI(x, y, obs_fld, Lx, Ly=False, xx=None, yy=None, bg_fld=None, gridsize=None
                 H[k, j * nx + nx + i] = (1 - wx) * wy
                 H[k, j * nx + nx + i + 1] = wx * wy
 
-                # print('Check sum: %s' % (wx * (1 - wy) + (1 - wx) * (1 - wy) + wx * wy + (1 - wx) * wy))
+                # print('Check sum: %s' % ((1 - wx) * (1 - wy) + wx * (1 - wy) + (1 - wx) * wy + wx * wy))
 
 
             else:
