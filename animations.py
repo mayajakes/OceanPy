@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# https://brushingupscience.com/2016/06/21/matplotlib-animations-the-easy-way/
 
 '''
 nc_animation makes an animation of a NetCDF file
@@ -14,6 +15,7 @@ from OceanPy.colormaps import *
 # from OpenEarthTools.plot.colormap_vaklodingen import *
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
+from pandas import to_datetime
 
 # class ncAnimation:
 #     filename = ''
@@ -75,46 +77,84 @@ def play1D_vars(vararray, t, x, y=None, interval=100, colors=None):
     return anim
 
 
-def play2D(x, y, z, interval=100, cmin=None, cmax=None, save=False):
-    fig = plt.figure()
-    ax = plt.subplot()
-    ax.set_aspect('equal')
-    pcol = plt.pcolor(x,y,z[0])
+def play2D(x, y, z=None, u=None, v=None, interval=100, time=None, mask=None, cmin=None, type='pcolor', bounds=None,
+           step=1, cmax=None, cmap=plt.cm.jet, figsize=(12, 6), save=False, savepath=False):
+    fig, ax = plt.subplots(figsize=figsize)
+    # fig.tight_layout()
+    # ax.set_aspect('equal')
 
-    # pcol.set_clim([0,1])
-    fig.colorbar(pcol,ax=ax)
-
-    plt.tight_layout()
+    if type == 'pcolor':
+        cax = ax.pcolormesh(x, y, z[0], cmap=cmap)
+    if type == 'contour':
+        cax = ax.contourf(x, y, z[0], cmap=cmap)
+        ax.contour(x, y, z[0], colors='k')
+    if type == 'quiver':
+        cax = ax.contourf(x, y, z[0], cmap=cmap, zorder=-1)
+        qax = ax.quiver(x, y, u[0], v[0])
 
     def init():
-        pcol.set_array([])
-        pcol.set_clim([])
-        return pcol
+        # ax.clear()
+        # if type == 'contour':
+        #     cax.set_data([], [], [])
+        # if type == 'pcolor':
+        #     cax.set_array(np.array([]))
+        #     cax.set_clim([])
+        # ax.set_title('')
+        return qax
 
     # animation function.  This is called sequentially
     def animate(i):
-        pcol.set_array(z[i,:-1,:-1].ravel())
-        if cmin is None and cmax is None:
-            pcol.set_clim([z[i,:-1,:-1].min(), z[i,:-1,:-1].max()])
-        else:
-            pcol.set_clim([cmin, cmax])
-        return pcol
+
+        if type == 'pcolor':
+            cax.set_array(z[i, :-1, :-1].ravel())
+            if cmin is None and cmax is None:
+                cax.set_clim([z[i, :-1, :-1].min(), z[i, :-1, :-1].max()])
+            else:
+                cax.set_clim([cmin, cmax])
+
+        if type == 'contour':
+            # cax.set_data(x, y, z[i])
+            ax.clear()
+            ax.collections = []
+
+            ax.contourf(x, y, z[i], bounds, cmap=cmap)
+            #             cax.set_clim([cmin, cmax])
+
+            ct = ax.contour(x, y, z[i], bounds, colors='k')
+            #             if bounds is not None:
+            #                 print(bounds[::step])
+            ax.clabel(ct)
+
+        if type == 'quiver':
+            ax.contourf(x, y, z[i], bounds, cmap=cmap, zorder=-1)
+            qax.set_UVC(u[i], v[i])
+
+            #         if time is not None:
+            try:
+                ax.set_title(time[i].strftime("%B %d, %Y"), color='r') if mask[i] \
+                    else ax.set_title(time[i].strftime("%B %d, %Y"), color='k')
+            except AttributeError:
+                ax.set_title(to_datetime(time[i]).strftime("%B %d, %Y"), color='r') if mask[i] \
+                    else ax.set_title(to_datetime(time[i]).strftime("%B %d, %Y"), color='k')
+
+        return cax
+
+    # if not type == 'contour':
+    fig.colorbar(cax, ax=ax)
 
     # call the animator.  blit=True means only re-draw the parts that have changed.
-    anim = animation.FuncAnimation(fig, animate, frames=z.shape[0], init_func=init, interval=interval, blit=False)
+    anim = animation.FuncAnimation(fig, animate, frames=time.size, init_func=init, interval=interval, blit=False)  #
 
-    def nc_animation_save(path, filename, dpi):
-        writer = animation.writers['ffmpeg'](fps=30)
-        anim.save(os.path.join(path, filename + '.mp4'),writer=writer,dpi=dpi)
+    def animation_save(path, filename, dpi):
+        writer = animation.writers['ffmpeg'](fps=5)
+        anim.save(os.path.join(path, filename + '.mp4'), writer=writer, dpi=dpi)
 
     if save:
-        path = input('Provide path to write the animation to: ')
+        # path = input('Provide path to write the animation to: ')
         filename = input('Provide filename for animation: ')
-        if not os.path.exists(path):
-            os.makedirs(path)
-        nc_animation_save(path, filename, dpi=300)
-
-    plt.show()
+        if not os.path.exists(savepath):
+            os.makedirs(savepath)
+        animation_save(savepath, filename, dpi=300)
 
     return anim
 
