@@ -62,6 +62,11 @@ def xbeach(x, y, z, xori, yori, alfa, dist_cross, dist_along, dx, dy): #, dist_c
 
     return xgrid, ygrid, zb
 
-# def xbeach1D(nonh=False):
-#     if nonh:
-#
+# TODO: xgrd, ygrd, x0, y0 check 1dim or 2dim, if 2dim flatten
+# TODO: cartesion or polar if cartesian np.sqrt((xgrd-x0)**2 + (ygrd-y0)**2), elif polar haversine
+def closest_gridpnt(longrd, latgrd, lon, lat):
+    longrd_flat, latgrd_flat = longrd.flatten(), latgrd.flatten()
+
+    idx = np.argmin([haversine([ln, lon], [lt, lat])[0] for ln, lt in zip(longrd_flat, latgrd_flat)])
+
+    return longrd_flat[idx], latgrd_flat[idx], idx
