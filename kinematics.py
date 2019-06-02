@@ -6,6 +6,7 @@ from gsw import f, grav
 from OceanPy.projections import haversine, rotatexy
 from OceanPy.utilities import contour_length
 # TODO: mask if any of the variables is nan
+import xarray as xr
 
 def gradient_balance_from_ssh(xr_ds, coord, variables=('adt', 'ugos', 'vgos'),
 dimensions=('longitude', 'latitude'), fcor=1e-4, gravity=9.81, transform=None, time=None):
@@ -150,3 +151,80 @@ dimensions=('longitude', 'latitude'), fcor=1e-4, gravity=9.81, transform=None, t
             V = np.nan
 
     return V, Vg, orientation, ug, vg
+
+def gradient_wind_from_ssh(xr_ds, variables=('adt', 'ugos', 'vgos'),
+                           dimensions=('time', 'latitude', 'longitude'), transform=None):
+
+    # take Absolute Dynamic Topography from SSH xarray
+    adt = xr_ds[variables[0]] if hasattr(xr_ds, variables[0]) else xr_ds.copy()
+    ugeos = xr_ds[variables[1]] if hasattr(xr_ds, variables[1]) else None
+    vgeos = xr_ds[variables[2]] if hasattr(xr_ds, variables[2]) else None
+
+    orientation = np.arctan(vgeos / ugeos)
+    Vgeos = np.sqrt(ugeos**2 + vgeos**2)
+
+    # transform polar to cartesian coordinate system
+    if transform is not None:
+        WGS84 = pyproj.Proj('+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs')
+        lnln, ltlt = np.meshgrid(xr_ds[dimensions[2]].data, xr_ds[dimensions[1]].data)
+        xx, yy = pyproj.transform(WGS84, transform, lnln, ltlt)
+    else:
+        xx, yy = np.meshgrid(xr_ds[dimensions[2]].data, xr_ds[dimensions[1]].data)
+
+    shp = adt.shape
+
+    gravity = grav(ltlt, p=0)
+    fcor = f(ltlt)
+    if adt.ndim != 2:
+        gravity = np.broadcast_to(gravity, shp)
+        fcor = np.broadcast_to(fcor, shp)
+
+    detadx = np.ma.masked_all(shp)
+    detady = detadx.copy()
+    d2etadx2, d2etady2, d2etadxdy = detadx.copy(), detadx.copy(), detadx.copy()
+    for it in range(len(xr_ds[dimensions[0]])):
+        detadx[it,] = np.gradient(adt[it,])[1] / np.gradient(xx)[1]
+        detady[it,] = np.gradient(adt[it,])[0] / np.gradient(yy)[0]
+
+        d2etadxdy[it,] = np.gradient(detadx[it,])[0] / np.gradient(yy)[0]
+
+        d2etadx2[it,] = np.gradient(detadx[it,])[1] / np.gradient(xx)[1]
+        d2etady2[it,] = np.gradient(detady[it,])[0] / np.gradient(yy)[0]
+
+    kappa = (-(d2etadx2*detady**2) -(d2etady2*detadx**2) + (2*d2etadxdy*detadx*detady)) / (detadx**2 + detady**2)**(3/2)
+    Rcurv = 1 / kappa
+
+    root = np.sqrt(((fcor**2 * Rcurv**2) / 4) + (fcor * Rcurv * Vgeos))
+
+    Vgrad = np.ma.masked_all(shp).flatten()
+    fcor, Vgeos, Rcurv, root = fcor.flatten(), Vgeos.data.flatten(), Rcurv.flatten(), root.flatten()
+    for i in range(len(Vgrad)):
+        # Northern Hemisphere
+        if fcor[i] >= 0:
+            if (Rcurv[i] < 0) & (Vgeos[i] > 0):
+                Vgrad[i] = -(fcor[i] * Rcurv[i] / 2) - root[i]
+            elif (Rcurv[i] > 0) & (Vgeos[i] > 0):
+                Vgrad[i] = -(fcor[i] * Rcurv[i] / 2) + root[i]
+            else:
+                Vgrad[i] = np.nan
+        # Southern Hemisphere
+        elif fcor[i] < 0:
+            if (Rcurv[i] < 0) & (Vgeos[i] > 0):
+                Vgrad[i] = -(fcor[i] * Rcurv[i] / 2) + root[i]
+            elif (Rcurv[i] > 0) & (Vgeos[i] > 0):
+                Vgrad[i] = -(fcor[i] * Rcurv[i] / 2) - root[i]
+            else:
+                Vgrad[i] = np.nan
+
+    Vgrad, Vgeos = Vgrad.reshape(shp), Vgeos.reshape(shp)
+    ugrad, vgrad = Vgrad * np.cos(orientation), Vgrad * np.sin(orientation)
+    xr_ds_new = xr.Dataset(data_vars={'Vgrad': (dimensions, Vgrad),
+                                      'Vgeos': (dimensions, Vgeos),
+                                      'orientation': (dimensions, orientation),
+                                      'ugrad': (dimensions, ugrad),
+                                      'vgrad': (dimensions, vgrad)},
+                           coords={dimensions[0]: xr_ds[dimensions[0]],
+                                   dimensions[1]: xr_ds[dimensions[1]],
+                                   dimensions[2]: xr_ds[dimensions[2]]})
+
+    return xr_ds_new
