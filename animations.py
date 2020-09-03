@@ -92,7 +92,7 @@ def play2D(x, y, z=None, u=None, v=None, interval=100, time=None, mask=None, cmi
         cax = ax.contourf(x, y, z[0], cmap=cmap, zorder=-1)
         qax = ax.quiver(x, y, u[0], v[0])
 
-    def init():
+    # def init():
         # ax.clear()
         # if type == 'contour':
         #     cax.set_data([], [], [])
@@ -100,7 +100,7 @@ def play2D(x, y, z=None, u=None, v=None, interval=100, time=None, mask=None, cmi
         #     cax.set_array(np.array([]))
         #     cax.set_clim([])
         # ax.set_title('')
-        return qax
+        # return qax
 
     # animation function.  This is called sequentially
     def animate(i):
@@ -129,21 +129,21 @@ def play2D(x, y, z=None, u=None, v=None, interval=100, time=None, mask=None, cmi
             ax.contourf(x, y, z[i], bounds, cmap=cmap, zorder=-1)
             qax.set_UVC(u[i], v[i])
 
-            #         if time is not None:
-            try:
-                ax.set_title(time[i].strftime("%B %d, %Y"), color='r') if mask[i] \
-                    else ax.set_title(time[i].strftime("%B %d, %Y"), color='k')
-            except AttributeError:
-                ax.set_title(to_datetime(time[i]).strftime("%B %d, %Y"), color='r') if mask[i] \
-                    else ax.set_title(to_datetime(time[i]).strftime("%B %d, %Y"), color='k')
-
+        try:
+            title = ax.set_title(time[i].strftime("%B %d, %Y"))
+        except AttributeError:
+            title = ax.set_title(to_datetime(time[i]).strftime("%B %d, %Y"))
+        if mask is not None:
+            if mask[i]:
+                plt.setp(title, color='r')
+                
         return cax
 
     # if not type == 'contour':
     fig.colorbar(cax, ax=ax)
 
     # call the animator.  blit=True means only re-draw the parts that have changed.
-    anim = animation.FuncAnimation(fig, animate, frames=time.size, init_func=init, interval=interval, blit=False)  #
+    anim = animation.FuncAnimation(fig, animate, frames=time.size, interval=interval, blit=False)  # , init_func=init
 
     def animation_save(path, filename, dpi):
         writer = animation.writers['ffmpeg'](fps=5)
