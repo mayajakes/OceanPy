@@ -3,6 +3,7 @@ from netCDF4 import Dataset, date2num
 import xml.etree.ElementTree as ElementTree
 import OceanPy
 from datetime import datetime
+import numpy as np
 try:
     from urllib.request import urlopen
 except ImportError:
@@ -21,6 +22,7 @@ class createNetCDF(object):
         ''' Create dimensions of variables to store in NetCDF '''
         for dimname, size in dims.items():
             self.dataset.createDimension(dimname=dimname, size=size)
+        # TODO: let function work inside netcdf
 
     def add_glob_attr(self, glob_attr):
         ''' Add global attributes '''
@@ -50,6 +52,10 @@ class createNetCDF(object):
         for varname, values in vars.items():
             standard_name, datatype, dimensions, data = values
 
+            # if '/' in varname:
+            #     group = os.path.dirname(varname)
+            #     self.dataset.createGroup(group)
+
             # create variables
             var = self.dataset.createVariable(varname, datatype, dimensions)
 
@@ -66,7 +72,11 @@ class createNetCDF(object):
             # var.description = standard_names[varname.split()[-1]][1]
 
             # add data to variables
-            var[:] = data
+            var[:] = np.ma.filled(data.astype(float), np.nan) # data
+
+    def delete_vars(self, vars):
+        # https://stackoverflow.com/questions/15141563/python-netcdf-making-a-copy-of-all-variables-and-attributes-but-one/32002401
+        pass
 
     def close(self):
         self.dataset.close()
