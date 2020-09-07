@@ -77,8 +77,8 @@ def play1D_vars(vararray, t, x, y=None, interval=100, colors=None):
     return anim
 
 
-def play2D(x, y, z=None, u=None, v=None, interval=100, time=None, mask=None, cmin=None, type='pcolor', bounds=None,
-           step=1, cmax=None, cmap=plt.cm.jet, figsize=(12, 6), save=False, savepath=False):
+def play2D(x, y, z=None, u=None, v=None, interval=100, time=None, mask=None, type='pcolor', cmap=plt.cm.jet, cmin=None, cmax=None, bounds=None,
+           figsize=(12, 6), save=False, savepath=False):
     fig, ax = plt.subplots(figsize=figsize)
     # fig.tight_layout()
     # ax.set_aspect('equal')
@@ -136,7 +136,7 @@ def play2D(x, y, z=None, u=None, v=None, interval=100, time=None, mask=None, cmi
         if mask is not None:
             if mask[i]:
                 plt.setp(title, color='r')
-                
+
         return cax
 
     # if not type == 'contour':
