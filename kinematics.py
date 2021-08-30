@@ -10,8 +10,8 @@ from scipy.interpolate import griddata, UnivariateSpline
 from stsci.convolve import boxcar
 from gsw import f, grav
 
-from OceanPy.netcdf import createNetCDF
-from OceanPy.projections import haversine, rotatexy
+from oceanpy.netcdf import createNetCDF
+from oceanpy.projections import haversine, rotatexy
 # from OceanPy.utilities import contour_length
 
 # TODO: mask if any of the variables is nan
@@ -168,19 +168,27 @@ varis = {
     'vgrad': ('surface_northward_sea_water_velocity', 'f8'),
     'Vgeos': ('surface_geostrophic_sea_water_speed', 'f8'),
     'Vgrad': ('surface_gradient-wind_sea_water_speed', 'f8'),
-    'ori': ('sea_water_velocity_to_direction', 'f8')
+    'ori': ('sea_water_velocity_to_direction', 'f8'),
+    'zeta': ('ocean_relative_vorticity', 'f8'),
+    'dzetadt': ('unsteady_relative_vorticity', 'f8'),
+    'fdwdz': ('vortex_stretching', 'f8'),
+    'betav': ('planetary_vorticity_advection', 'f8'),
+    'ugradzeta': ('relative_vorticity_advection', 'f8'),
+    'divag': ('divergence_of_velocity', 'f8'),
+    'ow': ('okubo_weiss_parameter', 'f8'),
+    'ow_norm': ('normalised_okubo_weiss_parameter', 'f8')
 }
+
+def interp(var, xx, yy):
+    finite = np.isfinite(var).flatten()
+    if not all(finite):
+        points = np.array((xx.flatten(), yy.flatten())).T
+        values = var.flatten()
+        var = griddata(points[finite], values[finite], points).reshape(xx.shape)
+    return var
 
 def gradient_wind_from_ssh(input_file, output_file=None, variables=('adt', 'ugos', 'vgos'), group='gradient-wind',
                            dimensions=('time', 'latitude', 'longitude'), smooth=False, transform=None):
-
-    def interp(var, xx, yy):
-        finite = np.isfinite(var).flatten()
-        if not all(finite):
-            points = np.array((xx.flatten(), yy.flatten())).T
-            values = var.flatten()
-            var = griddata(points[finite], values[finite], points).reshape(xx.shape)
-        return var
 
     # load file and variables
     dsin = Dataset(input_file, 'r+')
@@ -336,3 +344,135 @@ def gradient_wind_from_ssh(input_file, output_file=None, variables=('adt', 'ugos
     #                                dimensions[2]: xr_ds[dimensions[2]]})
 
     # return dsout if output_file is not None else new_variables# xr_ds_new
+
+def qg_from_ssh(input_file, output_file=None, group='quasi-geostrophy',
+                dimensions=('time', 'latitude', 'longitude'), smooth=False, transform=None):
+
+    # load file and variables
+    groups = ['gradient-wind', 'gw']
+    groupin = [grp for grp in Dataset(input_file).groups.keys() if grp.lower() in groups]
+    if groupin:
+        dsin = Dataset(input_file)[groupin[0]]
+    else:
+        print('Gradient wind variables not found in input file.')
+
+    # dsin = Dataset(input_file, 'r+')
+    if output_file is not None and os.path.isfile(output_file):
+        print('Output file %s already exists.' %os.path.basename(output_file))
+        dsout = createNetCDF(output_file)
+    elif output_file is not None and not os.path.isfile(output_file):
+        copyfile(input_file, output_file)
+        print('Output file %s, copied from input file %s.'
+              %(os.path.basename(output_file), os.path.basename(input_file)))
+        dsout = createNetCDF(output_file)
+
+    # load dimensions
+    lat = dsin[dimensions[1]][:] if dimensions[1] in dsin.dimensions else None
+    lon = dsin[dimensions[2]][:] if dimensions[2] in dsin.dimensions else None
+
+    # transform polar to cartesian coordinate system
+    if transform is not None:
+        WGS84 = pyproj.Proj('+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs')
+        lnln, ltlt = np.meshgrid(lon.data, lat.data)
+        xx, yy = pyproj.transform(WGS84, transform, lnln, ltlt)
+    else:
+        #TODO: what if ltlt is not defined, it will get stuck at calculating coriolis and gravity
+        xx, yy = np.meshgrid(lon.data, lat.data)
+
+    # calculate Coriolis parameters
+    fcor = f(ltlt)
+    beta = np.gradient(fcor)[0] / np.gradient(yy)[0]
+
+    # calculate ageostrophic components from gradient wind velocities
+    ugrad, vgrad = dsin['ugrad'][:], dsin['vgrad'][:]
+    uag = ugrad - dsin['ugeos'][:]
+    vag = vgrad - dsin['vgeos'][:]
+
+    smooth = True
+    grid_point = (3, 3)
+
+    zeta = np.ma.masked_all(ugrad.shape)
+    divgeos, divag = zeta.copy(), zeta.copy()
+    fdwdz, betav, ugradzeta = zeta.copy(), zeta.copy(), zeta.copy()
+    ow, ow_norm = zeta.copy(), zeta.copy()
+    for t in range(len(dsin['time'])):
+
+        # (gradients of) relative vorticity
+        dvdx = np.gradient(vgrad[t,])[1] / np.gradient(xx)[1]
+        dvdx = boxcar(interp(dvdx, lnln, ltlt), grid_point) if smooth else dvdx
+        dudy = np.gradient(ugrad[t,])[0] / np.gradient(yy)[0]
+        dudy = boxcar(interp(dudy, lnln, ltlt), grid_point) if smooth else dudy
+
+        zeta[t,] = dvdx - dudy
+
+        dzetadx = boxcar(np.gradient(zeta[t,])[1] / np.gradient(xx)[1], grid_point)
+        dzetady = boxcar(np.gradient(zeta[t,])[0] / np.gradient(yy)[0], grid_point)
+
+        # normal and shear components of strain and Okubo-Weiss parameter
+        # dudx = np.gradient(ugrad[t,])[1] / np.gradient(xx)[1]
+        # dudx = boxcar(interp(dudx, lnln, ltlt), grid_point) if smooth else dudx
+        # dvdy = np.gradient(vgrad[t,])[0] / np.gradient(yy)[0]
+        # dvdy = boxcar(interp(dvdy, lnln, ltlt), grid_point) if smooth else dvdy
+
+        # Okubo-Weiss parameter
+        # sn = dudx - dvdy
+        # ss = dvdx + dudy
+        #
+        # ow[t,] = sn**2 + ss**2 - zeta[t,]**2
+        # W0 = 0.2 * np.nanstd(ow[t,])
+        # ow_norm[t,] = ow[t,] / W0
+        # ow[t,] = ow[t,] / 4
+
+        # divergence of velocity field
+        duagdx = np.gradient(uag[t,])[1] / np.gradient(xx)[1]
+        duagdx = boxcar(interp(duagdx, lnln, ltlt), grid_point) if smooth else duagdx
+        dvagdy = np.gradient(vag[t,])[0] / np.gradient(yy)[0]
+        dvagdy = boxcar(interp(dvagdy, lnln, ltlt), grid_point) if smooth else dvagdy
+
+        divag[t,] = duagdx + dvagdy
+
+        # calculate vortivity budget terms
+        fdwdz[t,] = - fcor * (duagdx + dvagdy)# - (beta * gw.vgeos[t,])
+        betav[t,] = beta * vgrad[t,]
+        ugradzeta[t,] = (ugrad[t,] * dzetadx) + (vgrad[t,] * dzetady)
+
+        del dvdx, dudy, duagdx, dvagdy, dzetadx, dzetady # , dudx, dvdy, sn, ss
+
+    # local time derivative of relative vorticity
+    dt = np.gradient(dsin['time'][:]).astype('timedelta64[s]')
+    dzetadt = np.gradient(zeta)[0] / np.unique(dt).astype('float')
+
+    # store data in dictionary
+    data = {}
+    data['zeta'], data['dzetadt'], data['ugradzeta'] = zeta, dzetadt, ugradzeta
+    data['fdwdz'], data['betav'], data['divag'] = fdwdz, betav, divag
+
+    new_variables = {}
+    for var in data.keys():
+        new_variables['/%s/%s' %(group, var)] = varis[var] + (dimensions, ) + (data[var],)
+
+    # save data in netcdf file using OceanPy's createNetCDF class
+    if output_file is not None:
+
+        # create group
+        qgvb = dsout.dataset.createGroup(group)
+
+        # create dimensions and Coordinates
+        for name, dimension in dsin.dimensions.items():
+            qgvb.createDimension(name, (dimension.size if not dimension.isunlimited() else None))
+            if name in dimensions:
+                if name == 'time':
+                    try:
+                        values = num2date(dsin[name][:], units=dsin[name].units, calendar=dsin[name].calendar)
+                    except AttributeError:
+                        dsroot = Dataset(input_file)
+                        values = num2date(dsroot[name][:], units=dsroot[name].units, calendar=dsroot[name].calendar)
+                else:
+                    values = dsin[name][:]
+                new_variables['/%s/%s' %(group, name)] = (name, 'f8') + (name, values)
+
+        # create variables
+        dsout.create_vars(new_variables)
+
+    return new_variables if output_file is None else print('New variables %s, stored in group %s, of the output file.'
+          % (', '.join([var for var in data.keys() if var in dsout.dataset[group].variables.keys()]), group))
